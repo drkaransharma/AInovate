@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import AuthLayout from '@/components/AuthLayout'
 import { useWorkspace } from '@/lib/workspace-context'
 import { DataSourcesPanel, DataSourcesBadge } from '@/components/DataSources'
+import { ScoreBreakdownPanel } from '@/components/ScoreBreakdown'
 
 const departments = [
   'Engineering', 'Product', 'Marketing', 'Sales', 'Operations',
@@ -303,22 +304,10 @@ function IdeaEngineContent() {
                         </div>
 
                         {/* Score Breakdown */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                          {/* Impact Score Detail */}
-                          <div className="p-4 rounded-xl bg-black border border-dark-border">
-                            <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Impact Score</p>
-                            <div className="flex items-baseline gap-2 mb-2">
-                              <span className="text-3xl font-serif font-bold text-gold">{idea.impact_score}</span>
-                              <span className="text-gray-500">/100</span>
-                            </div>
-                            <div className="h-2 bg-dark-border rounded-full overflow-hidden mb-2">
-                              <div className="h-full bg-gradient-to-r from-gold-dim to-gold rounded-full" style={{ width: `${idea.impact_score}%` }} />
-                            </div>
-                            <p className={`text-xs font-medium ${scoreInfo.color} mb-1`}>{scoreInfo.label}</p>
-                            <p className="text-gray-500 text-xs leading-relaxed">{scoreInfo.desc}</p>
-                          </div>
+                        <ScoreBreakdownPanel score={idea.impact_score} title={idea.title} />
 
-                          {/* Priority Explanation */}
+                        {/* Priority + Classification */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="p-4 rounded-xl bg-black border border-dark-border">
                             <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Why {idea.priority}?</p>
                             <span className={`inline-flex px-2.5 py-1 rounded-lg text-sm font-medium border mb-2 ${priorityColor[idea.priority]}`}>
@@ -326,8 +315,6 @@ function IdeaEngineContent() {
                             </span>
                             <p className="text-gray-500 text-xs leading-relaxed">{priorityExplanation[idea.priority]}</p>
                           </div>
-
-                          {/* Category + Department */}
                           <div className="p-4 rounded-xl bg-black border border-dark-border">
                             <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Classification</p>
                             <div className="space-y-3">

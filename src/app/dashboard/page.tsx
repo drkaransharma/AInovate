@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import AuthLayout from '@/components/AuthLayout'
 import { useWorkspace } from '@/lib/workspace-context'
 import { DataSourcesPanel, DataSourcesBadge } from '@/components/DataSources'
+import { ScoreBreakdownPanel } from '@/components/ScoreBreakdown'
 
 interface Idea {
   id: string
@@ -220,22 +221,11 @@ function DashboardContent() {
                         <p className="text-gray-400 text-sm leading-relaxed">{idea.description}</p>
                       </div>
 
-                      {/* Score + Priority + Classification */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        {/* Impact Score Detail */}
-                        <div className="p-4 rounded-xl bg-black border border-dark-border">
-                          <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Why this Impact Score?</p>
-                          <div className="flex items-baseline gap-2 mb-2">
-                            <span className="text-3xl font-serif font-bold text-gold">{idea.impact_score}</span>
-                            <span className="text-gray-500">/100</span>
-                          </div>
-                          <div className="h-2 bg-dark-border rounded-full overflow-hidden mb-2">
-                            <div className="h-full bg-gradient-to-r from-gold-dim to-gold rounded-full" style={{ width: `${idea.impact_score}%` }} />
-                          </div>
-                          <p className={`text-xs font-semibold ${scoreInfo.color} mb-1`}>{scoreInfo.label}</p>
-                          <p className="text-gray-500 text-xs leading-relaxed">{scoreInfo.desc}</p>
-                        </div>
+                      {/* Score Breakdown */}
+                      <ScoreBreakdownPanel score={idea.impact_score} title={idea.title} />
 
+                      {/* Priority + Classification */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {/* Priority Explanation */}
                         <div className="p-4 rounded-xl bg-black border border-dark-border">
                           <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Why {idea.priority} Priority?</p>
