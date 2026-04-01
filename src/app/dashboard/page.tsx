@@ -35,6 +35,21 @@ const priorityColor: Record<string, string> = {
   Low: 'bg-green-500/20 text-green-400 border-green-500/30',
 }
 
+const priorityExplanation: Record<string, string> = {
+  Critical: 'Addresses an urgent business need with high revenue impact, competitive advantage, or risk mitigation. Requires immediate attention and resource allocation.',
+  High: 'Strong strategic alignment with significant potential for growth, efficiency gains, or customer satisfaction improvement. Should be prioritized in upcoming sprint.',
+  Medium: 'Valuable improvement that enhances operations or experience but is not time-sensitive. Good candidate for quarterly planning and roadmap inclusion.',
+  Low: 'Nice-to-have enhancement with modest impact. Can be scheduled when resources allow or bundled with related initiatives.',
+}
+
+function getScoreBreakdown(score: number) {
+  if (score >= 90) return { label: 'Exceptional', color: 'text-green-400', desc: 'Transformative potential — addresses critical business needs with clear ROI and broad organizational impact.' }
+  if (score >= 75) return { label: 'Strong', color: 'text-green-300', desc: 'High strategic value — significant potential to improve operations, revenue, or competitive positioning.' }
+  if (score >= 60) return { label: 'Promising', color: 'text-gold', desc: 'Solid business case — meaningful improvement with moderate implementation complexity.' }
+  if (score >= 40) return { label: 'Moderate', color: 'text-orange-400', desc: 'Has merit but limited scope — may need further refinement to increase impact.' }
+  return { label: 'Exploratory', color: 'text-gray-400', desc: 'Early-stage concept — needs validation and more detailed business case development.' }
+}
+
 function DashboardContent() {
   const { workspaceId } = useWorkspace()
   const [ideas, setIdeas] = useState<Idea[]>([])
@@ -42,6 +57,7 @@ function DashboardContent() {
   const [department, setDepartment] = useState('')
   const [priority, setPriority] = useState('')
   const [category, setCategory] = useState('')
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
   const fetchIdeas = async () => {
     setLoading(true)
@@ -83,7 +99,7 @@ function DashboardContent() {
           <div className="p-5 rounded-2xl bg-dark-card border border-dark-border mt-4">
             <h2 className="text-base font-serif font-bold text-gold mb-2">What is the Idea Dashboard?</h2>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Your central command centre for innovation. The Idea Dashboard gives you a bird&apos;s-eye view of every idea submitted across your organisation — filterable by department, priority, and category. Track KPIs like total ideas, average impact scores, and critical priorities at a glance. Use it to identify trends, spot high-impact opportunities, and make data-driven decisions about which innovations to pursue.
+              Your central command centre for innovation. The Idea Dashboard gives you a bird&apos;s-eye view of every idea submitted across your organisation — filterable by department, priority, and category. Track KPIs like total ideas, average impact scores, and critical priorities at a glance. Click any idea to see the full AI analysis with score breakdown explaining why it scored that way.
             </p>
           </div>
         </div>
@@ -105,44 +121,20 @@ function DashboardContent() {
 
         {/* Filters */}
         <div className="flex flex-wrap gap-3 mb-8 p-4 rounded-2xl bg-dark-card border border-dark-border">
-          <select
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-            className="px-4 py-2 bg-black border border-dark-border rounded-lg text-sm text-gray-300 focus:outline-none focus:border-gold/50"
-          >
+          <select value={department} onChange={(e) => setDepartment(e.target.value)} className="px-4 py-2 bg-black border border-dark-border rounded-lg text-sm text-gray-300 focus:outline-none focus:border-gold/50">
             <option value="">All Departments</option>
-            {departments.filter(Boolean).map((d) => (
-              <option key={d} value={d} className="bg-black">{d}</option>
-            ))}
+            {departments.filter(Boolean).map((d) => (<option key={d} value={d} className="bg-black">{d}</option>))}
           </select>
-
-          <select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            className="px-4 py-2 bg-black border border-dark-border rounded-lg text-sm text-gray-300 focus:outline-none focus:border-gold/50"
-          >
+          <select value={priority} onChange={(e) => setPriority(e.target.value)} className="px-4 py-2 bg-black border border-dark-border rounded-lg text-sm text-gray-300 focus:outline-none focus:border-gold/50">
             <option value="">All Priorities</option>
-            {priorities.filter(Boolean).map((p) => (
-              <option key={p} value={p} className="bg-black">{p}</option>
-            ))}
+            {priorities.filter(Boolean).map((p) => (<option key={p} value={p} className="bg-black">{p}</option>))}
           </select>
-
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="px-4 py-2 bg-black border border-dark-border rounded-lg text-sm text-gray-300 focus:outline-none focus:border-gold/50"
-          >
+          <select value={category} onChange={(e) => setCategory(e.target.value)} className="px-4 py-2 bg-black border border-dark-border rounded-lg text-sm text-gray-300 focus:outline-none focus:border-gold/50">
             <option value="">All Categories</option>
-            {categories.filter(Boolean).map((c) => (
-              <option key={c} value={c} className="bg-black">{c}</option>
-            ))}
+            {categories.filter(Boolean).map((c) => (<option key={c} value={c} className="bg-black">{c}</option>))}
           </select>
-
           {(department || priority || category) && (
-            <button
-              onClick={() => { setDepartment(''); setPriority(''); setCategory('') }}
-              className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
-            >
+            <button onClick={() => { setDepartment(''); setPriority(''); setCategory('') }} className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">
               Clear filters
             </button>
           )}
@@ -171,45 +163,107 @@ function DashboardContent() {
           </div>
         ) : (
           <div className="space-y-4">
-            {ideas.map((idea) => (
-              <div
-                key={idea.id}
-                className="p-6 rounded-2xl bg-dark-card border border-dark-border hover:border-gold/20 transition-all group"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-serif font-bold text-lg group-hover:text-gold transition-colors truncate">
-                        {idea.title}
-                      </h3>
-                      <span className={`shrink-0 inline-flex px-2.5 py-0.5 rounded-lg text-xs font-medium border ${priorityColor[idea.priority] || 'text-gray-400 border-dark-border'}`}>
-                        {idea.priority}
-                      </span>
+            {ideas.map((idea) => {
+              const isExpanded = expandedId === idea.id
+              const scoreInfo = getScoreBreakdown(idea.impact_score)
+              return (
+                <div
+                  key={idea.id}
+                  className={`rounded-2xl bg-dark-card border transition-all cursor-pointer ${isExpanded ? 'border-gold/40' : 'border-dark-border hover:border-gold/20'}`}
+                  onClick={() => setExpandedId(isExpanded ? null : idea.id)}
+                >
+                  {/* Summary Row */}
+                  <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-1.5">
+                        <h3 className="font-serif font-bold text-lg truncate">{idea.title}</h3>
+                        <span className={`shrink-0 inline-flex px-2.5 py-0.5 rounded-lg text-xs font-medium border ${priorityColor[idea.priority] || 'text-gray-400 border-dark-border'}`}>
+                          {idea.priority}
+                        </span>
+                      </div>
+                      <p className="text-gray-400 text-sm mb-2 line-clamp-2">{idea.ai_summary || idea.description}</p>
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                        <span className="px-2 py-1 rounded-md bg-gold/10 text-gold border border-gold/20">{idea.category}</span>
+                        <span>{idea.department}</span>
+                        <span>{new Date(idea.created_at).toLocaleDateString()}</span>
+                      </div>
                     </div>
-                    <p className="text-gray-400 text-sm mb-3 line-clamp-2">{idea.ai_summary || idea.description}</p>
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-                      <span className="px-2 py-1 rounded-md bg-gold/10 text-gold border border-gold/20">
-                        {idea.category}
-                      </span>
-                      <span>{idea.department}</span>
-                      <span>{new Date(idea.created_at).toLocaleDateString()}</span>
+                    <div className="shrink-0 flex items-center gap-4">
+                      <div className="flex flex-col items-center p-3 rounded-xl bg-black border border-dark-border min-w-[80px]">
+                        <span className="text-gray-500 text-[10px] uppercase tracking-wider mb-1">Impact</span>
+                        <span className="text-2xl font-serif font-bold text-gold">{idea.impact_score}</span>
+                        <p className={`text-[10px] font-medium ${scoreInfo.color}`}>{scoreInfo.label}</p>
+                      </div>
+                      <svg className={`w-5 h-5 text-gray-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
                     </div>
                   </div>
 
-                  {/* Impact Score */}
-                  <div className="shrink-0 flex flex-col items-center p-3 rounded-xl bg-black border border-dark-border min-w-[80px]">
-                    <span className="text-gray-500 text-[10px] uppercase tracking-wider mb-1">Impact</span>
-                    <span className="text-2xl font-serif font-bold text-gold">{idea.impact_score}</span>
-                    <div className="w-full h-1 bg-dark-border rounded-full mt-1 overflow-hidden">
-                      <div
-                        className="h-full bg-gold rounded-full"
-                        style={{ width: `${idea.impact_score}%` }}
-                      />
+                  {/* Expanded: Score Breakdown + Priority Explanation */}
+                  {isExpanded && (
+                    <div className="px-6 pb-6 border-t border-dark-border pt-5 space-y-5">
+                      {/* AI Summary */}
+                      <div className="p-4 rounded-xl bg-gold/5 border border-gold/20">
+                        <p className="text-gold text-xs uppercase tracking-wider font-semibold mb-2">AI Summary</p>
+                        <p className="text-gray-300 leading-relaxed">{idea.ai_summary}</p>
+                      </div>
+
+                      {/* Full Description */}
+                      <div>
+                        <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Full Description</p>
+                        <p className="text-gray-400 text-sm leading-relaxed">{idea.description}</p>
+                      </div>
+
+                      {/* Score + Priority + Classification */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {/* Impact Score Detail */}
+                        <div className="p-4 rounded-xl bg-black border border-dark-border">
+                          <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Why this Impact Score?</p>
+                          <div className="flex items-baseline gap-2 mb-2">
+                            <span className="text-3xl font-serif font-bold text-gold">{idea.impact_score}</span>
+                            <span className="text-gray-500">/100</span>
+                          </div>
+                          <div className="h-2 bg-dark-border rounded-full overflow-hidden mb-2">
+                            <div className="h-full bg-gradient-to-r from-gold-dim to-gold rounded-full" style={{ width: `${idea.impact_score}%` }} />
+                          </div>
+                          <p className={`text-xs font-semibold ${scoreInfo.color} mb-1`}>{scoreInfo.label}</p>
+                          <p className="text-gray-500 text-xs leading-relaxed">{scoreInfo.desc}</p>
+                        </div>
+
+                        {/* Priority Explanation */}
+                        <div className="p-4 rounded-xl bg-black border border-dark-border">
+                          <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Why {idea.priority} Priority?</p>
+                          <span className={`inline-flex px-2.5 py-1 rounded-lg text-sm font-medium border mb-3 ${priorityColor[idea.priority]}`}>
+                            {idea.priority}
+                          </span>
+                          <p className="text-gray-500 text-xs leading-relaxed">{priorityExplanation[idea.priority]}</p>
+                        </div>
+
+                        {/* Classification */}
+                        <div className="p-4 rounded-xl bg-black border border-dark-border">
+                          <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Classification</p>
+                          <div className="space-y-3">
+                            <div>
+                              <p className="text-xs text-gray-500 mb-1">Category</p>
+                              <span className="px-2.5 py-1 rounded-lg text-sm bg-gold/10 text-gold border border-gold/20">{idea.category}</span>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500 mb-1">Department</p>
+                              <span className="text-sm text-white">{idea.department}</span>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-500 mb-1">Submitted</p>
+                              <span className="text-sm text-white">{new Date(idea.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </main>
