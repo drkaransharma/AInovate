@@ -80,9 +80,12 @@ function DashboardContent() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-serif font-bold mb-3">Idea Dashboard</h1>
-          <p className="text-gray-400 text-lg">
-            Browse and filter all submitted ideas with AI-generated insights.
-          </p>
+          <div className="p-5 rounded-2xl bg-dark-card border border-dark-border mt-4">
+            <h2 className="text-base font-serif font-bold text-gold mb-2">What is the Idea Dashboard?</h2>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Your central command centre for innovation. The Idea Dashboard gives you a bird&apos;s-eye view of every idea submitted across your organisation — filterable by department, priority, and category. Track KPIs like total ideas, average impact scores, and critical priorities at a glance. Use it to identify trends, spot high-impact opportunities, and make data-driven decisions about which innovations to pursue.
+            </p>
+          </div>
         </div>
 
         {/* KPI Cards */}

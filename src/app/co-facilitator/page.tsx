@@ -142,9 +142,17 @@ function CoFacilitatorContent() {
             <span className="text-gold text-sm">Design Thinking</span>
           </div>
           <h1 className="text-4xl font-serif font-bold mb-3">AI Co-Facilitator</h1>
-          <p className="text-gray-400 text-lg">
-            Run a complete 5-stage Design Thinking session with AI guiding every step.
-          </p>
+          <div className="p-5 rounded-2xl bg-dark-card border border-dark-border mt-4">
+            <h2 className="text-base font-serif font-bold text-gold mb-2">What is the AI Co-Facilitator?</h2>
+            <p className="text-gray-400 text-sm leading-relaxed mb-3">
+              Your AI-powered Design Thinking facilitator. Instead of hiring expensive consultants, the AI Co-Facilitator guides your team through a complete 5-stage innovation session — from understanding users to testing solutions. Each stage builds on the previous one, with the AI providing expert-level facilitation, probing questions, and structured frameworks.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {['1. Empathize — Understand user needs', '2. Define — Frame the problem', '3. Ideate — Generate solutions', '4. Prototype — Plan builds', '5. Test — Validate ideas'].map((s) => (
+                <span key={s} className="px-2.5 py-1 rounded-lg text-xs bg-gold/10 text-gold border border-gold/20">{s}</span>
+              ))}
+            </div>
+          </div>
         </div>
 
         {!started ? (

@@ -79,9 +79,25 @@ function SentimentContent() {
             <span className="text-gold text-sm">AI Analysis</span>
           </div>
           <h1 className="text-4xl font-serif font-bold mb-3">Sentiment Pulse</h1>
-          <p className="text-gray-400 text-lg">
-            Analyze any text for sentiment, inclusion risk, and get AI-powered recommendations.
-          </p>
+          <div className="p-5 rounded-2xl bg-dark-card border border-dark-border mt-4">
+            <h2 className="text-base font-serif font-bold text-gold mb-2">What is Sentiment Pulse?</h2>
+            <p className="text-gray-400 text-sm leading-relaxed mb-3">
+              Sentiment Pulse is your AI-powered text intelligence tool. Paste any text — meeting notes, survey responses, emails, policy drafts, or internal communications — and get instant analysis on tone, emotional undertones, and potential inclusion risks. Perfect for HR teams reviewing communications, leaders crafting announcements, or anyone wanting to ensure their message lands right.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                { label: 'Sentiment Score', desc: '-1.0 to +1.0' },
+                { label: 'Inclusion Risk', desc: 'None to High' },
+                { label: 'Emotional Tone', desc: 'AI-detected mood' },
+                { label: 'Recommendation', desc: 'Actionable advice' },
+              ].map((item) => (
+                <div key={item.label} className="p-2 rounded-lg bg-black border border-dark-border text-center">
+                  <p className="text-xs font-semibold text-white">{item.label}</p>
+                  <p className="text-[10px] text-gray-500">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Input */}
