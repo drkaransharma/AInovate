@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { Suspense, useState, useEffect, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
@@ -14,7 +14,7 @@ interface Invite {
   workspaces?: { name: string }
 }
 
-export default function InvitePage() {
+function InviteContent() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
   const router = useRouter()
@@ -148,5 +148,17 @@ export default function InvitePage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function InvitePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading invite...</p>
+      </div>
+    }>
+      <InviteContent />
+    </Suspense>
   )
 }
