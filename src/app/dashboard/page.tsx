@@ -166,7 +166,7 @@ function DashboardContent() {
             <h3 className="text-sm font-serif font-bold mb-3 group-hover:text-gold">Top Scoring Ideas</h3>
             <div className="space-y-2">
               {topIdeas.map((idea, i) => (
-                <div key={idea.id} className="flex items-center gap-2">
+                <Link key={idea.id} href={`/idea-engine/${idea.id}`} className="flex items-center gap-2 hover:bg-dark-hover rounded-lg p-1 -m-1 transition-all" onClick={e => e.stopPropagation()}>
                   <span className="text-xs font-bold text-gold w-4">{i + 1}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-[11px] text-white truncate">{idea.title}</p>
@@ -177,7 +177,7 @@ function DashboardContent() {
                     </div>
                     <span className="text-xs font-bold text-gold w-6 text-right">{idea.impact_score}</span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

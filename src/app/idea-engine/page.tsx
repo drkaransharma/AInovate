@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import AuthLayout from '@/components/AuthLayout'
 import { useWorkspace } from '@/lib/workspace-context'
 import { DataSourcesPanel, DataSourcesBadge } from '@/components/DataSources'
@@ -263,7 +264,7 @@ function IdeaEngineContent() {
                     <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-1.5">
-                          <h3 className="font-serif font-bold text-lg truncate">{idea.title}</h3>
+                          <Link href={`/idea-engine/${idea.id}`} className="font-serif font-bold text-lg truncate hover:text-gold transition-colors" onClick={e => e.stopPropagation()}>{idea.title}</Link>
                           <span className={`shrink-0 inline-flex px-2.5 py-0.5 rounded-lg text-xs font-medium border ${priorityColor[idea.priority] || 'text-gray-400 border-dark-border'}`}>
                             {idea.priority}
                           </span>
@@ -337,6 +338,11 @@ function IdeaEngineContent() {
                             </div>
                           </div>
                         </div>
+
+                        {/* View Full Business Case */}
+                        <Link href={`/idea-engine/${idea.id}`} onClick={e => e.stopPropagation()} className="block p-3 rounded-xl bg-gold/10 border border-gold/20 text-center hover:bg-gold/20 transition-all">
+                          <span className="text-sm font-semibold text-gold">View Full Business Case →</span>
+                        </Link>
                       </div>
                     )}
                   </div>
