@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold: #FFD246;
+  --gold-dim: #b8962e;
+  --black: #000000;
+  --dark: #0a0a0a;
+  --dark-card: #111111;
+  --dark-border: #222222;
+  --dark-hover: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
+}
+
+body {
+  color: var(--text-primary);
+  background: var(--black);
+  font-family: 'Calibri', 'Segoe UI', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--dark-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Gold accent animations */
+@keyframes shimmer {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 210, 70, 0.3); }
+  50% { box-shadow: 0 0 20px 5px rgba(255, 210, 70, 0.1); }
+}
+
+.pulse-gold {
+  animation: pulse-gold 3s ease-in-out infinite;
+}
+
+/* Streaming text cursor */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.streaming-cursor::after {
+  content: '|';
+  color: var(--gold);
+  animation: blink 1s step-end infinite;
+}
