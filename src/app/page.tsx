@@ -74,13 +74,11 @@ export default function Home() {
                 <span className="w-2 h-2 rounded-full bg-gold animate-shimmer" />
                 <span className="text-gold text-sm">Innovation as a Service</span>
               </div>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-bold mb-6 leading-tight">
-                Transform Ideas into{' '}
-                <span className="text-gold">Impact</span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-5 leading-tight">
+                Transform Ideas<br />into <span className="text-gold">Impact</span>
               </h1>
-              <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-                AInovate is an AI-native platform that helps any organisation capture ideas,
-                build business cases, track ROI, and upskill teams — all powered by AI and your organisation&apos;s own data.
+              <p className="text-base text-gray-400 mb-8 max-w-xl mx-auto leading-relaxed">
+                Capture ideas. Build business cases. Track ROI. Upskill teams.<br />All powered by AI and your organisation&apos;s own data.
               </p>
               <div className="flex items-center justify-center gap-4">
                 <Link

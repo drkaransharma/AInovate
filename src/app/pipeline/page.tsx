@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import AuthLayout from '@/components/AuthLayout'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, AreaChart, Area, PieChart, Pie } from 'recharts'
 
 type TabType = 'overview' | 'business_case' | 'development' | 'impact'
 
@@ -185,107 +186,129 @@ function PipelineContent() {
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {/* KPIs */}
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
             {[
-              { label: 'Business Cases', value: businessCases.length, color: 'text-gold' },
+              { label: 'Biz Cases', value: businessCases.length, color: 'text-gold' },
               { label: 'Approved', value: businessCases.filter(b => b.status === 'Approved').length, color: 'text-green-400' },
-              { label: 'In Development', value: devProjects.length, color: 'text-cyan-400' },
-              { label: 'Live & Tracking', value: roiProjects.length, color: 'text-emerald-400' },
-              { label: 'Total Invested', value: `AED ${(totalInvested / 1000000).toFixed(1)}M`, color: 'text-gold' },
-              { label: 'Total Returns', value: `AED ${(totalReturns / 1000000).toFixed(1)}M`, color: 'text-green-400' },
+              { label: 'In Dev', value: devProjects.length, color: 'text-cyan-400' },
+              { label: 'Live', value: roiProjects.length, color: 'text-emerald-400' },
+              { label: 'Invested', value: `${(totalInvested / 1000000).toFixed(1)}M`, color: 'text-gold' },
+              { label: 'Returns', value: `${(totalReturns / 1000000).toFixed(1)}M`, color: 'text-green-400' },
             ].map(kpi => (
-              <div key={kpi.label} className="p-4 rounded-2xl bg-dark-card border border-dark-border text-center">
-                <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{kpi.label}</p>
+              <div key={kpi.label} className="p-3 rounded-2xl bg-dark-card border border-dark-border text-center">
+                <p className="text-[10px] text-gray-500 uppercase">{kpi.label}</p>
                 <p className={`text-xl font-serif font-bold ${kpi.color}`}>{kpi.value}</p>
               </div>
             ))}
           </div>
 
-          {/* Funnel with drop-off reasons */}
-          <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
-            <h3 className="text-sm font-serif font-bold mb-2">Innovation Funnel</h3>
-            <p className="text-gray-500 text-xs mb-5">Not every idea becomes a business case — and that&apos;s by design. The funnel filters ideas through organisational readiness, strategic fit, and resource availability.</p>
-            <div className="space-y-1">
-              {[
-                { label: 'Ideas Submitted', count: 84, width: '100%', color: 'bg-blue-400', dropoff: null, dropCount: 0 },
-                { label: 'AI Analyzed & Scored', count: 84, width: '100%', color: 'bg-blue-300', dropoff: null, dropCount: 0 },
-                { label: 'Passed Threshold (75+)', count: 12, width: '14%', color: 'bg-purple-400', dropoff: '72 ideas below threshold — scored low on strategic alignment, feasibility, or market potential based on current ERP and CRM data', dropCount: 72 },
-                { label: 'Business Case Created', count: 7, width: '8%', color: 'bg-gold', dropoff: '5 ideas parked — strong ideas but deprioritised due to: budget cycle timing (2), duplicate initiative exists (1), department restructuring (1), pending regulatory clarity (1)', dropCount: 5 },
-                { label: 'Leadership Approved', count: 5, width: '6%', color: 'bg-green-400', dropoff: '2 under review — awaiting Q2 budget committee (1), pending COO sign-off on resource allocation (1)', dropCount: 2 },
-                { label: 'In Development', count: 3, width: '4%', color: 'bg-cyan-400', dropoff: '2 approved but queued — dev team at capacity, scheduled for Q3 sprint planning', dropCount: 2 },
-                { label: 'Live & Measuring ROI', count: 2, width: '2.5%', color: 'bg-emerald-400', dropoff: '1 in active development — expected deployment Apr 30', dropCount: 1 },
-              ].map((step) => (
-                <div key={step.label}>
-                  {step.dropoff && (
-                    <div className="flex items-center gap-2 py-2 pl-4 ml-3 border-l-2 border-red-500/20">
-                      <span className="text-red-400 text-[10px]">↓ -{step.dropCount}</span>
-                      <span className="text-[10px] text-gray-500">{step.dropoff}</span>
-                    </div>
-                  )}
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-400">{step.label}</span>
-                      <span className="text-xs font-bold text-white">{step.count}</span>
-                    </div>
-                    <div className="h-6 bg-dark-border rounded-lg overflow-hidden">
-                      <div className={`h-full ${step.color} rounded-lg flex items-center px-2 transition-all`} style={{ width: step.width, minWidth: '40px' }}>
-                        <span className="text-[10px] font-bold text-black">{step.count}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+          {/* Funnel Chart + ROI Trend */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
+              <h3 className="text-sm font-serif font-bold mb-3">Innovation Funnel</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={[
+                  { stage: 'Submitted', count: 84, fill: '#60a5fa' },
+                  { stage: 'Analyzed', count: 84, fill: '#93c5fd' },
+                  { stage: 'Threshold', count: 12, fill: '#a78bfa' },
+                  { stage: 'Biz Case', count: 7, fill: '#FFD246' },
+                  { stage: 'Approved', count: 5, fill: '#4ade80' },
+                  { stage: 'In Dev', count: 3, fill: '#22d3ee' },
+                  { stage: 'Live', count: 2, fill: '#34d399' },
+                ]} layout="vertical" margin={{ left: 5, right: 20, top: 5, bottom: 5 }}>
+                  <XAxis type="number" hide />
+                  <YAxis type="category" dataKey="stage" width={60} tick={{ fontSize: 10, fill: '#999' }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '12px', color: '#fff' }} />
+                  <Bar dataKey="count" radius={[0, 6, 6, 0]} barSize={16}>
+                    {[
+                      { fill: '#60a5fa' }, { fill: '#93c5fd' }, { fill: '#a78bfa' },
+                      { fill: '#FFD246' }, { fill: '#4ade80' }, { fill: '#22d3ee' }, { fill: '#34d399' },
+                    ].map((entry, i) => (<Cell key={i} fill={entry.fill} />))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+              <p className="text-[10px] text-gray-600 mt-2">84 ideas → 12 passed threshold → 7 business cases → 2 live with ROI</p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
+              <h3 className="text-sm font-serif font-bold mb-1">Portfolio ROI Trend</h3>
+              <p className="text-[10px] text-gray-500 mb-3">Monthly portfolio return on innovation investment</p>
+              <ResponsiveContainer width="100%" height={200}>
+                <AreaChart data={[
+                  { m: 'Oct', roi: 0 }, { m: 'Nov', roi: 65 }, { m: 'Dec', roi: 120 },
+                  { m: 'Jan', roi: 180 }, { m: 'Feb', roi: 230 }, { m: 'Mar', roi: 278 },
+                ]} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="pRoiGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#34d399" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="m" tick={{ fontSize: 10, fill: '#666' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: '#444' }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '12px', color: '#fff' }} formatter={(v) => `${v}%`} />
+                  <Area type="monotone" dataKey="roi" stroke="#34d399" fill="url(#pRoiGrad)" strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Why ideas don't advance */}
-          <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
-            <h3 className="text-sm font-serif font-bold mb-3">Why Ideas Don&apos;t Advance</h3>
-            <p className="text-gray-500 text-xs mb-4">A healthy innovation funnel filters aggressively. Here are the top reasons ideas are parked, deferred, or deprioritised at each stage — none are wasted, all remain in the idea bank for future consideration.</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {[
-                { reason: 'Below Impact Threshold', count: 72, pct: '85.7%', icon: '📊', desc: 'Score below 75 — weak strategic alignment, limited market data, or low feasibility based on current resources' },
-                { reason: 'Budget Cycle Timing', count: 8, pct: '9.5%', icon: '💰', desc: 'Good ideas that missed the current budget window — automatically queued for next cycle review' },
-                { reason: 'Duplicate / Overlapping', count: 3, pct: '3.6%', icon: '🔄', desc: 'Similar initiative already in progress — merged insights into existing project' },
-                { reason: 'Resource Constraints', count: 4, pct: '4.8%', icon: '👥', desc: 'Approved but development teams at capacity — scheduled for upcoming sprint planning' },
-                { reason: 'Regulatory / Compliance', count: 1, pct: '1.2%', icon: '⚖️', desc: 'Pending regulatory clarity or compliance review before investment can proceed' },
-                { reason: 'Org Restructuring', count: 2, pct: '2.4%', icon: '🏗️', desc: 'Department ownership unclear due to ongoing restructuring — will reassign post-transition' },
-              ].map(r => (
-                <div key={r.reason} className="p-3 rounded-xl bg-black border border-dark-border">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-2">
-                      <span>{r.icon}</span>
-                      <span className="text-xs font-medium text-white">{r.reason}</span>
-                    </div>
-                    <span className="text-xs font-bold text-red-400">{r.count}</span>
-                  </div>
-                  <p className="text-[10px] text-gray-500 leading-relaxed">{r.desc}</p>
-                </div>
-              ))}
+          {/* Drop-off Reasons Donut + List */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="p-5 rounded-2xl bg-dark-card border border-dark-border flex flex-col items-center justify-center">
+              <h3 className="text-sm font-serif font-bold mb-2">Drop-off Breakdown</h3>
+              <ResponsiveContainer width={160} height={160}>
+                <PieChart>
+                  <Pie data={[
+                    { name: 'Below Threshold', value: 72 },
+                    { name: 'Budget Timing', value: 8 },
+                    { name: 'Resources', value: 4 },
+                    { name: 'Duplicate', value: 3 },
+                    { name: 'Other', value: 3 },
+                  ]} cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={2} dataKey="value" stroke="none">
+                    <Cell fill="#f87171" /><Cell fill="#fb923c" /><Cell fill="#FFD246" /><Cell fill="#60a5fa" /><Cell fill="#666" />
+                  </Pie>
+                  <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '11px', color: '#fff' }} />
+                </PieChart>
+              </ResponsiveContainer>
+              <p className="text-[10px] text-gray-500">90 ideas filtered</p>
             </div>
-            <p className="text-[10px] text-gray-600 mt-3">💡 Parked ideas are not deleted — they remain in the Idea &amp; Insight module and are automatically re-evaluated when conditions change (new budget, team capacity, regulatory updates).</p>
+            <div className="lg:col-span-2 p-5 rounded-2xl bg-dark-card border border-dark-border">
+              <h3 className="text-sm font-serif font-bold mb-3">Why Ideas Don&apos;t Advance</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { r: 'Below Threshold', c: 72, icon: '📊', color: 'text-red-400' },
+                  { r: 'Budget Timing', c: 8, icon: '💰', color: 'text-orange-400' },
+                  { r: 'Resource Constraints', c: 4, icon: '👥', color: 'text-gold' },
+                  { r: 'Duplicate Initiative', c: 3, icon: '🔄', color: 'text-blue-400' },
+                  { r: 'Regulatory Hold', c: 1, icon: '⚖️', color: 'text-gray-400' },
+                  { r: 'Org Restructure', c: 2, icon: '🏗️', color: 'text-gray-400' },
+                ].map(d => (
+                  <div key={d.r} className="flex items-center justify-between p-2.5 rounded-lg bg-black border border-dark-border">
+                    <span className="text-[11px] text-gray-300">{d.icon} {d.r}</span>
+                    <span className={`text-xs font-bold ${d.color}`}>{d.c}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] text-gray-600 mt-2">💡 Parked ideas remain in Idea &amp; Insight for re-evaluation</p>
+            </div>
           </div>
 
           {/* ROI Summary */}
           <div className="p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
-            <h3 className="text-sm font-serif font-bold mb-4 text-emerald-400">Portfolio Impact Summary</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                <p className="text-[10px] text-gray-500 mb-1">Total Revenue Impact</p>
-                <p className="text-lg font-serif font-bold text-green-400">+AED 4.0M</p>
-              </div>
-              <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                <p className="text-[10px] text-gray-500 mb-1">Cost Savings</p>
-                <p className="text-lg font-serif font-bold text-gold">AED 520K/yr</p>
-              </div>
-              <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                <p className="text-[10px] text-gray-500 mb-1">Avg ROI Achieved</p>
-                <p className="text-lg font-serif font-bold text-emerald-400">278%</p>
-              </div>
-              <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                <p className="text-[10px] text-gray-500 mb-1">Avg Payback</p>
-                <p className="text-lg font-serif font-bold text-white">5.8 months</p>
-              </div>
+            <h3 className="text-sm font-serif font-bold text-emerald-400 mb-3">Portfolio Impact</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { l: 'Revenue Impact', v: '+AED 4.0M', c: 'text-green-400' },
+                { l: 'Cost Savings', v: 'AED 520K/yr', c: 'text-gold' },
+                { l: 'Avg ROI', v: '278%', c: 'text-emerald-400' },
+                { l: 'Avg Payback', v: '5.8 months', c: 'text-white' },
+              ].map(k => (
+                <div key={k.l} className="p-3 rounded-xl bg-black border border-dark-border text-center">
+                  <p className="text-[10px] text-gray-500">{k.l}</p>
+                  <p className={`text-lg font-serif font-bold ${k.c}`}>{k.v}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -505,18 +528,22 @@ function PipelineContent() {
                 </div>
               </div>
 
-              {/* ROI Trend */}
+              {/* ROI Trend Chart */}
               <div className="p-3 rounded-xl bg-black border border-dark-border mb-5">
-                <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-2">ROI Trend (Monthly %)</p>
-                <div className="flex items-end gap-2 h-16">
-                  {proj.trend.map((val, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                      <span className="text-[9px] text-gray-500">{val}%</span>
-                      <div className="w-full bg-emerald-400/80 rounded-t" style={{ height: `${(val / Math.max(...proj.trend)) * 48}px` }} />
-                      <span className="text-[9px] text-gray-600">M{i + 1}</span>
-                    </div>
-                  ))}
-                </div>
+                <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-2">ROI Trend</p>
+                <ResponsiveContainer width="100%" height={100}>
+                  <AreaChart data={proj.trend.map((v, i) => ({ m: `M${i + 1}`, roi: v }))} margin={{ left: 0, right: 5, top: 5, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id={`roiG-${proj.id}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#34d399" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="m" tick={{ fontSize: 9, fill: '#555' }} axisLine={false} tickLine={false} />
+                    <YAxis hide />
+                    <Area type="monotone" dataKey="roi" stroke="#34d399" fill={`url(#roiG-${proj.id})`} strokeWidth={2} />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
 
               {/* Individual Metrics */}

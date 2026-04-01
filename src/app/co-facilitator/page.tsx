@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import AuthLayout from '@/components/AuthLayout'
+import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts'
 
 // ── Training Course Library ──
 const courses = [
@@ -201,31 +202,55 @@ function AcademyContent() {
             </div>
           </div>
 
-          {/* Skills Heatmap */}
-          <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
-            <h3 className="text-base font-serif font-bold mb-4">Skills Intelligence</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                { skill: 'Design Thinking', level: 78, trend: '+12%' },
-                { skill: 'Problem Solving', level: 82, trend: '+8%' },
-                { skill: 'AI Literacy', level: 45, trend: '+23%' },
-                { skill: 'Data Analysis', level: 67, trend: '+5%' },
-                { skill: 'Customer Empathy', level: 71, trend: '+15%' },
-                { skill: 'Lean Methodology', level: 58, trend: '+10%' },
-                { skill: 'Strategic Thinking', level: 39, trend: 'New' },
-                { skill: 'Innovation Leadership', level: 33, trend: 'New' },
-              ].map((skill) => (
-                <div key={skill.skill} className="p-3 rounded-xl bg-black border border-dark-border">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-medium text-white">{skill.skill}</p>
-                    <span className="text-[10px] text-green-400">{skill.trend}</span>
-                  </div>
-                  <div className="h-2 bg-dark-border rounded-full overflow-hidden mb-1">
-                    <div className={`h-full rounded-full ${skill.level >= 70 ? 'bg-green-400' : skill.level >= 50 ? 'bg-gold' : 'bg-orange-400'}`} style={{ width: `${skill.level}%` }} />
-                  </div>
-                  <p className="text-[10px] text-gray-500">{skill.level}% org proficiency</p>
-                </div>
-              ))}
+          {/* Skills Intelligence — Radar + Course Bar */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
+              <h3 className="text-sm font-serif font-bold mb-2">Skills Radar</h3>
+              <ResponsiveContainer width="100%" height={240}>
+                <RadarChart data={[
+                  { skill: 'Design Think', score: 78 }, { skill: 'Problem Solv', score: 82 },
+                  { skill: 'AI Literacy', score: 45 }, { skill: 'Data Analysis', score: 67 },
+                  { skill: 'CX Design', score: 71 }, { skill: 'Lean Method', score: 58 },
+                  { skill: 'Strategy', score: 39 }, { skill: 'Leadership', score: 33 },
+                ]}>
+                  <PolarGrid stroke="#222" />
+                  <PolarAngleAxis dataKey="skill" tick={{ fontSize: 9, fill: '#999' }} />
+                  <Radar dataKey="score" stroke="#FFD246" fill="#FFD246" fillOpacity={0.15} strokeWidth={2} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
+              <h3 className="text-sm font-serif font-bold mb-2">Course Enrollment</h3>
+              <ResponsiveContainer width="100%" height={240}>
+                <BarChart data={courses.filter(c => c.status === 'published').map(c => ({
+                  name: c.title.split(' ').slice(0, 2).join(' '),
+                  enrolled: c.enrolled,
+                  completed: c.completed,
+                }))} layout="vertical" margin={{ left: 5, right: 10, top: 5, bottom: 5 }}>
+                  <XAxis type="number" hide />
+                  <YAxis type="category" dataKey="name" width={80} tick={{ fontSize: 9, fill: '#999' }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '11px', color: '#fff' }} />
+                  <Bar dataKey="enrolled" fill="#60a5fa" radius={[0, 4, 4, 0]} barSize={10} name="Enrolled" />
+                  <Bar dataKey="completed" fill="#4ade80" radius={[0, 4, 4, 0]} barSize={10} name="Completed" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Completion Donut */}
+          <div className="p-5 rounded-2xl bg-dark-card border border-dark-border flex items-center gap-8">
+            <ResponsiveContainer width={120} height={120}>
+              <PieChart>
+                <Pie data={[{ name: 'Done', value: 172 }, { name: 'Remaining', value: 100 }]} cx="50%" cy="50%" innerRadius={35} outerRadius={50} paddingAngle={3} dataKey="value" stroke="none">
+                  <Cell fill="#4ade80" /><Cell fill="#222" />
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div>
+              <p className="text-2xl font-serif font-bold text-green-400">63%</p>
+              <p className="text-xs text-gray-400">Training completion rate</p>
+              <p className="text-[10px] text-gray-600 mt-1">172 of 272 enrolled • 86% avg score • 5 active learners</p>
             </div>
           </div>
         </div>
