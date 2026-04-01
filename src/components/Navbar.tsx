@@ -27,7 +27,7 @@ export default function Navbar() {
           {/* Logo + Workspace */}
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="flex items-center group">
-              <img src="/logo.svg" alt="AInovate" className="h-9 group-hover:opacity-90 transition-opacity" />
+              <img src="/logo-nav.svg" alt="AInovate" className="h-8 group-hover:opacity-90 transition-opacity" />
             </Link>
             {workspace && (
               <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg bg-dark-card border border-dark-border">

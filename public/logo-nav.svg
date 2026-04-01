@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="150 60 460 100" width="280" height="60">
+  <defs>
+    <linearGradient id="goldMain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFEB82"/>
+      <stop offset="55%" stop-color="#FFD246"/>
+      <stop offset="100%" stop-color="#C9A84C"/>
+    </linearGradient>
+    <linearGradient id="lineFade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFD246" stop-opacity="0.8"/>
+      <stop offset="55%" stop-color="#FFD246" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FFD246" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <text x="190" y="120"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="72"
+    font-weight="700"
+    letter-spacing="-1">
+    <tspan fill="#FFD246">AI</tspan><tspan fill="#FFFCF0">novate</tspan>
+  </text>
+  <rect x="198" y="127" width="400" height="1" fill="url(#lineFade)"/>
+  <text x="199" y="150"
+    font-family="'Courier New', Courier, monospace"
+    font-size="11"
+    letter-spacing="5"
+    fill="#6B5A30">Innovation as a Service</text>
+</svg>
