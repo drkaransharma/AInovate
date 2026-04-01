@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="640" height="240">
+  <defs>
+
+    <linearGradient id="goldMain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFEB82"/>
+      <stop offset="55%" stop-color="#FFD246"/>
+      <stop offset="100%" stop-color="#C9A84C"/>
+    </linearGradient>
+
+    <linearGradient id="goldH" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFEB82"/>
+      <stop offset="100%" stop-color="#E6AF2D"/>
+    </linearGradient>
+
+    <linearGradient id="arcGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD246" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#C9A84C" stop-opacity="0.7"/>
+    </linearGradient>
+
+    <radialGradient id="aura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFD246" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#FFD246" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <filter id="glow2" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <filter id="crisp" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="0.8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <clipPath id="hexClip">
+      <polygon points="112,34 152,57 152,103 112,126 72,103 72,57"/>
+    </clipPath>
+
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="240" fill="#000000"/>
+
+  <!-- Ambient aura -->
+  <ellipse cx="112" cy="80" rx="90" ry="90" fill="url(#aura)"/>
+
+  <!-- ═══════════════════════════════════════════
+       ICON MARK — "Innovation Delivered"
+       Concept: A rising spark/idea ascending 
+       through a service arc — ideas flowing 
+       from organisation to outcome
+  ═══════════════════════════════════════════ -->
+
+  <!-- OUTER SERVICE ARC — represents "as a Service" delivery loop -->
+  <!-- Large sweeping arc — open at bottom, suggesting embrace/delivery -->
+  <path d="M 62,140 A 58,58 0 1,1 162,140"
+    fill="none" stroke="#1E1400" stroke-width="1.2" opacity="0.9"/>
+  <path d="M 68,140 A 52,52 0 1,1 156,140"
+    fill="none" stroke="#2A1E06" stroke-width="0.7" opacity="0.6"/>
+
+  <!-- Active arc segment — gold, top-right quadrant (active zone) -->
+  <path d="M 112,28 A 52,52 0 0,1 156,140"
+    fill="none" stroke="url(#arcGold)" stroke-width="2"
+    stroke-linecap="round" filter="url(#glow2)"/>
+
+  <!-- Arc endpoint dot (delivery point) -->
+  <circle cx="156" cy="140" r="4.5" fill="#FFD246" filter="url(#glow2)"/>
+  <circle cx="156" cy="140" r="2" fill="#FFFCF0"/>
+
+  <!-- Arc start dot (top) -->
+  <circle cx="112" cy="28" r="4.5" fill="#FFEB82" filter="url(#glow2)"/>
+  <circle cx="112" cy="28" r="2" fill="#FFFCF0"/>
+
+  <!-- ── INNER RISING IDEA — the innovation spark ── -->
+  <!-- Three ascending nodes connected by lines — idea climbing upward -->
+
+  <!-- Connection lines between nodes — bottom to top -->
+  <g filter="url(#glow2)" opacity="0.7">
+    <line x1="112" y1="130" x2="96"  y2="105" stroke="#FFD246" stroke-width="1.2"/>
+    <line x1="96"  y1="105" x2="118" y2="80"  stroke="#FFD246" stroke-width="1.4"/>
+    <line x1="118" y1="80"  x2="106" y2="54"  stroke="#FFEB82" stroke-width="1.6"/>
+  </g>
+
+  <!-- Dim background mesh -->
+  <g stroke="#2A1E06" stroke-width="0.5" opacity="0.8">
+    <line x1="90"  y1="130" x2="112" y2="105"/>
+    <line x1="112" y1="105" x2="134" y2="130"/>
+    <line x1="96"  y1="105" x2="128" y2="105"/>
+    <line x1="118" y1="80"  x2="134" y2="105"/>
+    <line x1="118" y1="80"  x2="96"  y2="80"/>
+    <line x1="96"  y1="80"  x2="90"  y2="105"/>
+    <line x1="106" y1="54"  x2="128" y2="80"/>
+    <line x1="106" y1="54"  x2="86"  y2="80"/>
+  </g>
+
+  <!-- Node 1 — Bottom: Raw idea / input -->
+  <circle cx="112" cy="130" r="6.5" fill="#0A0700" stroke="#3D2A07" stroke-width="1"/>
+  <circle cx="112" cy="130" r="3"   fill="#3D2A07"/>
+
+  <!-- Node 2 — Mid: Processing / AI enrichment -->
+  <circle cx="96"  cy="105" r="5"   fill="#0A0700" stroke="#2A1E06" stroke-width="0.8"/>
+  <circle cx="96"  cy="105" r="2.2" fill="#2A1E06"/>
+
+  <!-- Node 3 — Mid-high: Validated idea -->
+  <circle cx="134" cy="105" r="5"   fill="#0A0700" stroke="#2A1E06" stroke-width="0.8"/>
+  <circle cx="134" cy="105" r="2.2" fill="#2A1E06"/>
+
+  <!-- Node 4 — Upper: Structured solution -->
+  <circle cx="118" cy="80" r="7.5" fill="#0D0900" stroke="#FFD246" stroke-width="1.2"
+    filter="url(#glow2)"/>
+  <circle cx="118" cy="80" r="3.5" fill="url(#goldMain)"/>
+  <circle cx="118" cy="80" r="1.5" fill="#FFFCF0"/>
+
+  <!-- Node 5 — APEX: Innovation delivered -->
+  <circle cx="106" cy="54" r="10" fill="#0A0700" stroke="#FFD246" stroke-width="1.6"
+    filter="url(#glow)"/>
+  <circle cx="106" cy="54" r="5.5" fill="url(#goldMain)"/>
+  <circle cx="106" cy="54" r="2.2" fill="#FFFCF0"/>
+
+  <!-- Apex pulse rings -->
+  <circle cx="106" cy="54" r="14" fill="none" stroke="#FFD246"
+    stroke-width="0.6" opacity="0.25"/>
+  <circle cx="106" cy="54" r="19" fill="none" stroke="#FFD246"
+    stroke-width="0.4" opacity="0.12"/>
+
+  <!-- ── SMALL ORBIT DOTS around apex (AI intelligence) ── -->
+  <circle cx="122" cy="42" r="2.5" fill="#FFEB82" opacity="0.7" filter="url(#crisp)"/>
+  <circle cx="90"  cy="46" r="2"   fill="#FFD246"  opacity="0.55" filter="url(#crisp)"/>
+  <circle cx="118" cy="34" r="1.8" fill="#C9A84C"  opacity="0.5"/>
+
+  <!-- ══════════════════════════════════════
+       WORDMARK — AInovate as ONE unified word
+  ══════════════════════════════════════ -->
+
+  <!-- 
+    Design decision: "AInovate" reads as one flowing word.
+    "AI" is subtly set in a brighter weight to embed the meaning
+    without splitting the word. Think of it like "FedEx" — 
+    the arrow is hidden inside, not shouted.
+    
+    Approach: Single-weight serif italic — premium, unified.
+    "AI" portion has a very subtle underline/dot to hint at the embedded meaning.
+  -->
+
+  <!-- AInovate — single text element, tspan for color, guaranteed no gap -->
+  <text x="190" y="120"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="72"
+    font-weight="700"
+    letter-spacing="-1">
+    <tspan fill="#FFD246">AI</tspan><tspan fill="#FFFCF0">novate</tspan>
+  </text>
+
+  <!-- Baseline accent -->
+  <defs>
+    <linearGradient id="lineFade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFD246" stop-opacity="0.8"/>
+      <stop offset="55%" stop-color="#FFD246" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FFD246" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="198" y="127" width="400" height="1" fill="url(#lineFade)"/>
+
+  <!-- Tagline -->
+  <text x="199" y="150"
+    font-family="'Courier New', Courier, monospace"
+    font-size="11"
+    letter-spacing="5"
+    fill="#6B5A30">Innovation as a Service</text>
+
+
+
+  <!-- ── Forward motion lines (far right) ── -->
+  <!-- Three parallel lines converging into a forward point — speed/delivery -->
+  <g opacity="0.2">
+    <line x1="575" y1="106" x2="610" y2="106" stroke="#FFD246" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="579" y1="116" x2="610" y2="116" stroke="#FFD246" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="583" y1="126" x2="610" y2="126" stroke="#FFD246" stroke-width="0.8" stroke-linecap="round"/>
+  </g>
+  <polygon points="608,100 622,116 608,132" fill="#FFD246" opacity="0.18"/>
+
+</svg>

@@ -161,9 +161,9 @@ function PipelineContent() {
       {/* Header */}
       <div className="mb-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold/30 bg-gold/5 mb-4">
-          <span className="text-gold text-sm">🎯 Impact Meter</span>
+          <span className="text-gold text-sm">🎯 Innovation Pulse</span>
         </div>
-        <h1 className="text-4xl font-serif font-bold mb-3">Innovation Pipeline &amp; Impact Meter</h1>
+        <h1 className="text-4xl font-serif font-bold mb-3">Innovation Pulse</h1>
         <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
           <h2 className="text-base font-serif font-bold text-gold mb-2">What is the Impact Meter?</h2>
           <p className="text-gray-400 text-sm leading-relaxed">

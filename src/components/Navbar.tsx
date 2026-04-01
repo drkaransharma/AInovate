@@ -7,7 +7,7 @@ import { useWorkspace } from '@/lib/workspace-context'
 const navItems = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/idea-engine', label: 'Idea & Insight' },
-  { href: '/pipeline', label: 'Pipeline' },
+  { href: '/pipeline', label: 'Innovation Pulse' },
   { href: '/co-facilitator', label: 'AI Academy' },
   { href: '/settings', label: 'Settings' },
 ]
@@ -26,13 +26,8 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo + Workspace */}
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-lg bg-gold flex items-center justify-center">
-                <span className="text-black font-bold text-sm font-serif">Ai</span>
-              </div>
-              <span className="text-xl font-serif font-bold text-gold group-hover:text-gold-light transition-colors">
-                AInovate
-              </span>
+            <Link href="/dashboard" className="flex items-center group">
+              <img src="/logo.svg" alt="AInovate" className="h-9 group-hover:opacity-90 transition-opacity" />
             </Link>
             {workspace && (
               <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg bg-dark-card border border-dark-border">

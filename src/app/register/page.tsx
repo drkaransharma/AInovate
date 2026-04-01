@@ -77,11 +77,8 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gold flex items-center justify-center">
-              <span className="text-black font-bold font-serif">Ai</span>
-            </div>
-            <span className="text-2xl font-serif font-bold text-gold">AInovate</span>
+          <Link href="/" className="inline-block">
+            <img src="/logo.svg" alt="AInovate" className="h-12 mx-auto" />
           </Link>
           <p className="text-gray-500 mt-2">Create your workspace</p>
         </div>

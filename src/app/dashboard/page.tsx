@@ -201,7 +201,7 @@ function DashboardContent() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <span className="text-lg">🚀</span>
-              <h2 className="text-base font-serif font-bold group-hover:text-gold transition-colors">Innovation Pipeline</h2>
+              <h2 className="text-base font-serif font-bold group-hover:text-gold transition-colors">Innovation Pulse</h2>
             </div>
             <span className="text-xs text-gray-500 group-hover:text-gold transition-colors">View pipeline →</span>
           </div>
