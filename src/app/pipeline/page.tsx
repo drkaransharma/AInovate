@@ -201,23 +201,32 @@ function PipelineContent() {
             ))}
           </div>
 
-          {/* Funnel */}
+          {/* Funnel with drop-off reasons */}
           <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
-            <h3 className="text-sm font-serif font-bold mb-4">Innovation Funnel</h3>
-            <div className="space-y-3">
+            <h3 className="text-sm font-serif font-bold mb-2">Innovation Funnel</h3>
+            <p className="text-gray-500 text-xs mb-5">Not every idea becomes a business case — and that&apos;s by design. The funnel filters ideas through organisational readiness, strategic fit, and resource availability.</p>
+            <div className="space-y-1">
               {[
-                { label: 'Ideas Submitted', count: 84, width: '100%', color: 'bg-blue-400' },
-                { label: 'Passed Threshold (75+)', count: 12, width: '14%', color: 'bg-purple-400' },
-                { label: 'Business Case Created', count: 7, width: '8%', color: 'bg-gold' },
-                { label: 'Leadership Approved', count: 5, width: '6%', color: 'bg-green-400' },
-                { label: 'In Development', count: 3, width: '4%', color: 'bg-cyan-400' },
-                { label: 'Live & Measuring ROI', count: 2, width: '2.5%', color: 'bg-emerald-400' },
-              ].map(step => (
+                { label: 'Ideas Submitted', count: 84, width: '100%', color: 'bg-blue-400', dropoff: null, dropCount: 0 },
+                { label: 'AI Analyzed & Scored', count: 84, width: '100%', color: 'bg-blue-300', dropoff: null, dropCount: 0 },
+                { label: 'Passed Threshold (75+)', count: 12, width: '14%', color: 'bg-purple-400', dropoff: '72 ideas below threshold — scored low on strategic alignment, feasibility, or market potential based on current ERP and CRM data', dropCount: 72 },
+                { label: 'Business Case Created', count: 7, width: '8%', color: 'bg-gold', dropoff: '5 ideas parked — strong ideas but deprioritised due to: budget cycle timing (2), duplicate initiative exists (1), department restructuring (1), pending regulatory clarity (1)', dropCount: 5 },
+                { label: 'Leadership Approved', count: 5, width: '6%', color: 'bg-green-400', dropoff: '2 under review — awaiting Q2 budget committee (1), pending COO sign-off on resource allocation (1)', dropCount: 2 },
+                { label: 'In Development', count: 3, width: '4%', color: 'bg-cyan-400', dropoff: '2 approved but queued — dev team at capacity, scheduled for Q3 sprint planning', dropCount: 2 },
+                { label: 'Live & Measuring ROI', count: 2, width: '2.5%', color: 'bg-emerald-400', dropoff: '1 in active development — expected deployment Apr 30', dropCount: 1 },
+              ].map((step, i) => (
                 <div key={step.label}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-gray-400">{step.label}</span>
-                    <span className="text-xs font-bold text-white">{step.count}</span>
-                  </div>
+                  {step.dropoff && (
+                    <div className="flex items-center gap-2 py-2 pl-4 ml-3 border-l-2 border-red-500/20">
+                      <span className="text-red-400 text-[10px]">↓ -{step.dropCount}</span>
+                      <span className="text-[10px] text-gray-500">{step.dropoff}</span>
+                    </div>
+                  )}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-gray-400">{step.label}</span>
+                      <span className="text-xs font-bold text-white">{step.count}</span>
+                    </div>
                   <div className="h-6 bg-dark-border rounded-lg overflow-hidden">
                     <div className={`h-full ${step.color} rounded-lg flex items-center px-2 transition-all`} style={{ width: step.width, minWidth: '40px' }}>
                       <span className="text-[10px] font-bold text-black">{step.count}</span>
@@ -226,6 +235,34 @@ function PipelineContent() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Why ideas don't advance */}
+          <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
+            <h3 className="text-sm font-serif font-bold mb-3">Why Ideas Don&apos;t Advance</h3>
+            <p className="text-gray-500 text-xs mb-4">A healthy innovation funnel filters aggressively. Here are the top reasons ideas are parked, deferred, or deprioritised at each stage — none are wasted, all remain in the idea bank for future consideration.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {[
+                { reason: 'Below Impact Threshold', count: 72, pct: '85.7%', icon: '📊', desc: 'Score below 75 — weak strategic alignment, limited market data, or low feasibility based on current resources' },
+                { reason: 'Budget Cycle Timing', count: 8, pct: '9.5%', icon: '💰', desc: 'Good ideas that missed the current budget window — automatically queued for next cycle review' },
+                { reason: 'Duplicate / Overlapping', count: 3, pct: '3.6%', icon: '🔄', desc: 'Similar initiative already in progress — merged insights into existing project' },
+                { reason: 'Resource Constraints', count: 4, pct: '4.8%', icon: '👥', desc: 'Approved but development teams at capacity — scheduled for upcoming sprint planning' },
+                { reason: 'Regulatory / Compliance', count: 1, pct: '1.2%', icon: '⚖️', desc: 'Pending regulatory clarity or compliance review before investment can proceed' },
+                { reason: 'Org Restructuring', count: 2, pct: '2.4%', icon: '🏗️', desc: 'Department ownership unclear due to ongoing restructuring — will reassign post-transition' },
+              ].map(r => (
+                <div key={r.reason} className="p-3 rounded-xl bg-black border border-dark-border">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <span>{r.icon}</span>
+                      <span className="text-xs font-medium text-white">{r.reason}</span>
+                    </div>
+                    <span className="text-xs font-bold text-red-400">{r.count}</span>
+                  </div>
+                  <p className="text-[10px] text-gray-500 leading-relaxed">{r.desc}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-[10px] text-gray-600 mt-3">💡 Parked ideas are not deleted — they remain in the Idea &amp; Insight module and are automatically re-evaluated when conditions change (new budget, team capacity, regulatory updates).</p>
           </div>
 
           {/* ROI Summary */}
