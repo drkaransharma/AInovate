@@ -139,15 +139,31 @@ function CoFacilitatorContent() {
             <svg className="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <span className="text-gold text-sm">Design Thinking</span>
+            <span className="text-gold text-sm">AI Academy</span>
           </div>
-          <h1 className="text-4xl font-serif font-bold mb-3">AI Co-Facilitator</h1>
+          <h1 className="text-4xl font-serif font-bold mb-3">AI Academy — Co-Facilitator</h1>
           <div className="p-5 rounded-2xl bg-dark-card border border-dark-border mt-4">
-            <h2 className="text-base font-serif font-bold text-gold mb-2">What is the AI Co-Facilitator?</h2>
+            <h2 className="text-base font-serif font-bold text-gold mb-2">What is the AI Academy Co-Facilitator?</h2>
             <p className="text-gray-400 text-sm leading-relaxed mb-3">
-              Your AI-powered Design Thinking facilitator. Instead of hiring expensive consultants, the AI Co-Facilitator guides your team through a complete 5-stage innovation session — from understanding users to testing solutions. Each stage builds on the previous one, with the AI providing expert-level facilitation, probing questions, and structured frameworks.
+              The AI Academy is AInovate&apos;s flagship capability delivery — we empower your organisation&apos;s employees with hands-on innovation skills through AI-guided learning sessions. Rather than passive training, your teams actively solve real business challenges using structured Design Thinking methodology, guided step-by-step by our AI facilitator.
             </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+              {[
+                { icon: '🎓', title: 'Upskill Teams', desc: 'Build problem-solving, critical thinking, and innovation capabilities across your workforce' },
+                { icon: '🧠', title: 'Learn by Doing', desc: 'Employees solve real challenges from their own departments — not hypothetical case studies' },
+                { icon: '📈', title: 'Measurable Impact', desc: 'Every session produces actionable prototypes and test plans that feed back into your idea pipeline' },
+              ].map((item) => (
+                <div key={item.title} className="p-3 rounded-xl bg-black border border-dark-border">
+                  <span className="text-lg">{item.icon}</span>
+                  <p className="text-sm font-semibold text-white mt-1">{item.title}</p>
+                  <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-gray-500 text-xs leading-relaxed">
+              <span className="text-gold font-semibold">How it works:</span> Each session follows the 5-stage Design Thinking framework. The AI acts as an expert facilitator — asking the right questions, providing frameworks, generating ideas, and structuring outputs. Sessions can be run individually or as team workshops.
+            </p>
+            <div className="flex flex-wrap gap-2 mt-3">
               {['1. Empathize — Understand user needs', '2. Define — Frame the problem', '3. Ideate — Generate solutions', '4. Prototype — Plan builds', '5. Test — Validate ideas'].map((s) => (
                 <span key={s} className="px-2.5 py-1 rounded-lg text-xs bg-gold/10 text-gold border border-gold/20">{s}</span>
               ))}
@@ -159,10 +175,12 @@ function CoFacilitatorContent() {
           /* Context Input */
           <div className="max-w-2xl mx-auto">
             <div className="p-8 rounded-2xl bg-dark-card border border-dark-border">
-              <h2 className="text-2xl font-serif font-bold mb-2">Start a Design Thinking Session</h2>
-              <p className="text-gray-400 mb-6">
-                Describe the challenge, project, or problem you want to explore.
-                The AI will guide you through all 5 stages.
+              <h2 className="text-2xl font-serif font-bold mb-2">Start a Learning Session</h2>
+              <p className="text-gray-400 mb-2">
+                Describe a real challenge from your organisation. The AI will guide you through a complete Design Thinking session — building your problem-solving skills while producing actionable outputs.
+              </p>
+              <p className="text-xs text-gray-600 mb-6">
+                💡 Tip: Use challenges from your own department for maximum learning impact. The AI adapts to your industry and context.
               </p>
               <textarea
                 value={context}

@@ -22,8 +22,8 @@ const modules = [
     ),
   },
   {
-    title: 'AI Co-Facilitator',
-    description: 'Run a full Design Thinking session — from Empathize to Test — with AI guiding every stage.',
+    title: 'AI Academy',
+    description: 'Empower your employees with hands-on innovation skills. AI-guided learning sessions that build problem-solving capabilities using real business challenges.',
     href: '/co-facilitator',
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,7 +83,7 @@ export default function Home() {
               </h1>
               <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
                 AInovate is an AI-native platform that helps any organization capture ideas,
-                run Design Thinking sessions, and analyze sentiment — all powered by advanced AI.
+                run AI Academy learning sessions, and analyze sentiment — all powered by advanced AI.
               </p>
               <div className="flex items-center justify-center gap-4">
                 <Link
