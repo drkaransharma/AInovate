@@ -43,8 +43,7 @@
 
   </defs>
 
-  <!-- Background -->
-  <rect width="640" height="240" fill="#000000"/>
+  <!-- Background (transparent) -->
 
   <!-- Ambient aura -->
   <ellipse cx="112" cy="80" rx="90" ry="90" fill="url(#aura)"/>

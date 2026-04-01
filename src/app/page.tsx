@@ -51,7 +51,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center">
-              <img src="/logo.svg" alt="AInovate" className="h-9" />
+              <img src="/logo-nav.svg" alt="AInovate" className="h-8" />
             </Link>
             <div className="flex items-center gap-3">
               <Link href="/login" className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">
@@ -79,8 +79,8 @@ export default function Home() {
                 <span className="text-gold">Impact</span>
               </h1>
               <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-                AInovate is an AI-native platform that helps any organization capture ideas,
-                capture ideas, build business cases, track ROI, and upskill teams — all powered by AI and your organisation&apos;s own data.
+                AInovate is an AI-native platform that helps any organisation capture ideas,
+                build business cases, track ROI, and upskill teams — all powered by AI and your organisation&apos;s own data.
               </p>
               <div className="flex items-center justify-center gap-4">
                 <Link
