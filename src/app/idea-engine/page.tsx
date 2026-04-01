@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import AuthLayout from '@/components/AuthLayout'
 import { useWorkspace } from '@/lib/workspace-context'
+import { DataSourcesPanel, DataSourcesBadge } from '@/components/DataSources'
 
 const departments = [
   'Engineering', 'Product', 'Marketing', 'Sales', 'Operations',
@@ -269,6 +270,7 @@ function IdeaEngineContent() {
                           <span className="px-2 py-1 rounded-md bg-gold/10 text-gold border border-gold/20">{idea.category}</span>
                           <span>{idea.department}</span>
                           <span>{new Date(idea.created_at).toLocaleDateString()}</span>
+                          <DataSourcesBadge />
                         </div>
                       </div>
                       <div className="shrink-0 flex items-center gap-4">
@@ -290,6 +292,9 @@ function IdeaEngineContent() {
                           <p className="text-gold text-xs uppercase tracking-wider font-semibold mb-2">AI Summary</p>
                           <p className="text-gray-300 leading-relaxed">{idea.ai_summary}</p>
                         </div>
+
+                        {/* Data Sources */}
+                        <DataSourcesPanel />
 
                         {/* Description */}
                         <div>

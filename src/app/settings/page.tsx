@@ -192,6 +192,45 @@ function SettingsContent() {
         </div>
       </section>
 
+      {/* Data Source Integrations */}
+      <section className="p-6 rounded-2xl bg-dark-card border border-dark-border mb-8">
+        <h2 className="text-xl font-serif font-bold mb-2">Data Source Integrations</h2>
+        <p className="text-gray-500 text-sm mb-5">
+          AInovate analyses ideas using multiple data sources. Configure which systems feed into the AI scoring engine.
+        </p>
+        <div className="space-y-3">
+          {[
+            { name: 'Claude AI Engine', icon: '🤖', desc: 'Natural language analysis, auto-categorisation, and impact scoring powered by Anthropic Claude.', status: 'Connected', statusColor: 'bg-green-500/20 text-green-400 border-green-500/30', config: 'Model: Claude Sonnet 4 | Max Tokens: 500' },
+            { name: 'ERP System', icon: '🏢', desc: 'Financial data, operational metrics, budgets, and resource allocation from your enterprise resource planning system.', status: 'Connected', statusColor: 'bg-green-500/20 text-green-400 border-green-500/30', config: 'Sync: Real-time | Last sync: 2 min ago' },
+            { name: 'Organisation Knowledge Bank', icon: '📚', desc: 'Internal policies, strategy documents, innovation playbooks, and historical outcomes that inform AI decisions.', status: 'Connected', statusColor: 'bg-green-500/20 text-green-400 border-green-500/30', config: 'Documents: 847 indexed | Updated daily' },
+            { name: 'CRM & Sales Data', icon: '📊', desc: 'Customer feedback, NPS scores, deal pipeline data, and market intelligence for customer-facing idea scoring.', status: 'Connected', statusColor: 'bg-green-500/20 text-green-400 border-green-500/30', config: 'Records: 12,450 | Pipeline: AED 8.2M' },
+            { name: 'HR & People Analytics', icon: '👥', desc: 'Team capacity, skill inventories, department priorities, and workforce analytics for feasibility assessment.', status: 'Connected', statusColor: 'bg-green-500/20 text-green-400 border-green-500/30', config: 'Employees: 342 | Departments: 10' },
+            { name: 'Industry Benchmarks', icon: '🌐', desc: 'External market data, competitor analysis, sector trends, and global innovation indices for contextual scoring.', status: 'Synced', statusColor: 'bg-blue-500/20 text-blue-400 border-blue-500/30', config: 'Source: CB Insights, Gartner | Updated weekly' },
+          ].map((source) => (
+            <div key={source.name} className="p-4 rounded-xl bg-black border border-dark-border">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl shrink-0 mt-0.5">{source.icon}</span>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-sm font-semibold text-white">{source.name}</h3>
+                      <span className={`inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium border ${source.statusColor}`}>
+                        {source.status}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 leading-relaxed mb-1.5">{source.desc}</p>
+                    <p className="text-[10px] text-gray-600 font-mono">{source.config}</p>
+                  </div>
+                </div>
+                <button className="shrink-0 px-3 py-1.5 text-xs text-gray-400 border border-dark-border rounded-lg hover:text-white hover:border-gray-500 transition-colors">
+                  Configure
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Invite Members */}
       {isAdmin && (
         <section className="p-6 rounded-2xl bg-dark-card border border-dark-border mb-8">
