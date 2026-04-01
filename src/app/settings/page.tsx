@@ -192,6 +192,89 @@ function SettingsContent() {
         </div>
       </section>
 
+      {/* Scoring Configuration */}
+      <section className="p-6 rounded-2xl bg-dark-card border border-dark-border mb-8">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-xl font-serif font-bold">Scoring Configuration</h2>
+          <span className="px-2.5 py-1 rounded-lg text-[10px] font-medium bg-gold/20 text-gold border border-gold/30">Configured at Onboarding</span>
+        </div>
+        <p className="text-gray-500 text-sm mb-5">
+          Impact scoring weights are calibrated during client onboarding based on your organisation&apos;s strategic priorities, industry benchmarks, and scientific assessment frameworks. These weights determine how each factor contributes to the final idea score.
+        </p>
+
+        {/* Scoring Methodology */}
+        <div className="p-4 rounded-xl bg-gold/5 border border-gold/20 mb-5">
+          <p className="text-gold text-xs uppercase tracking-wider font-semibold mb-2">Scoring Methodology</p>
+          <p className="text-gray-400 text-xs leading-relaxed">
+            AInovate uses a <span className="text-white font-medium">Weighted Multi-Factor Composite Score</span> based on established innovation assessment science. Weights are derived from your organisation&apos;s OKRs, industry-specific impact multipliers, and validated frameworks including the Innovation Ambition Matrix (Nagji &amp; Tuff, HBR), Real-Win-Worth-it (3M), and Stage-Gate methodology (Cooper). During onboarding, our consultants calibrate these weights through stakeholder interviews and strategic alignment workshops.
+          </p>
+        </div>
+
+        {/* Weight Sliders */}
+        <div className="space-y-4">
+          {[
+            { key: 'strategic_alignment', icon: '🎯', label: 'Strategic Alignment', weight: 25, source: 'Knowledge Bank + ERP', rationale: 'How closely this idea aligns with stated organisational strategy, OKRs, and long-term vision.' },
+            { key: 'revenue_potential', icon: '💰', label: 'Revenue Potential', weight: 20, source: 'CRM + Financial Data', rationale: 'Estimated revenue impact based on market sizing, deal pipeline data, and historical conversion rates.' },
+            { key: 'customer_impact', icon: '👤', label: 'Customer Impact', weight: 20, source: 'CRM + Feedback Data', rationale: 'Expected improvement to NPS, CSAT, and customer retention based on feedback analysis.' },
+            { key: 'feasibility', icon: '⚙️', label: 'Feasibility', weight: 15, source: 'HR + Resource Data', rationale: 'Implementation likelihood based on available skills, team capacity, and technology readiness.' },
+            { key: 'innovation_index', icon: '🚀', label: 'Innovation Index', weight: 10, source: 'Industry Benchmarks', rationale: 'Novelty and differentiation score benchmarked against industry competitors and market trends.' },
+            { key: 'resource_efficiency', icon: '📊', label: 'Resource Efficiency', weight: 10, source: 'ERP + HR Data', rationale: 'Cost-to-impact ratio considering implementation effort, timeline, and ongoing maintenance.' },
+          ].map((factor) => (
+            <div key={factor.key} className="p-4 rounded-xl bg-black border border-dark-border">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{factor.icon}</span>
+                  <span className="text-sm font-semibold text-white">{factor.label}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] text-gray-600">{factor.source}</span>
+                  <div className="flex items-center gap-1 bg-dark-card border border-dark-border rounded-lg px-3 py-1">
+                    <span className="text-lg font-serif font-bold text-gold">{factor.weight}</span>
+                    <span className="text-xs text-gray-500">%</span>
+                  </div>
+                </div>
+              </div>
+              <div className="h-2 bg-dark-border rounded-full overflow-hidden mb-2">
+                <div className="h-full bg-gradient-to-r from-gold-dim to-gold rounded-full" style={{ width: `${factor.weight * 4}%` }} />
+              </div>
+              <p className="text-[11px] text-gray-500 leading-relaxed">{factor.rationale}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Total */}
+        <div className="mt-4 p-3 rounded-xl bg-dark-hover border border-dark-border flex items-center justify-between">
+          <span className="text-sm text-gray-400">Total Weight</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-serif font-bold text-gold">100</span>
+            <span className="text-sm text-gray-500">%</span>
+            <svg className="w-5 h-5 text-green-400 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Calibration Info */}
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
+            <p className="text-[10px] text-gray-500 uppercase">Last Calibrated</p>
+            <p className="text-sm font-semibold text-white">March 15, 2026</p>
+          </div>
+          <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
+            <p className="text-[10px] text-gray-500 uppercase">Calibration Method</p>
+            <p className="text-sm font-semibold text-white">Stakeholder Workshop</p>
+          </div>
+          <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
+            <p className="text-[10px] text-gray-500 uppercase">Next Review</p>
+            <p className="text-sm font-semibold text-white">September 2026</p>
+          </div>
+        </div>
+
+        <p className="text-[10px] text-gray-600 mt-4 leading-relaxed">
+          To recalibrate scoring weights, contact your AInovate innovation consultant or raise a calibration request through the platform. Weights are typically reviewed bi-annually or when strategic priorities shift.
+        </p>
+      </section>
+
       {/* Data Source Integrations */}
       <section className="p-6 rounded-2xl bg-dark-card border border-dark-border mb-8">
         <h2 className="text-xl font-serif font-bold mb-2">Data Source Integrations</h2>

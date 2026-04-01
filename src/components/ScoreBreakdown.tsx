@@ -125,6 +125,9 @@ export function ScoreBreakdownPanel({ score, title }: { score: number; title: st
         <p className="text-[10px] text-gray-600 leading-relaxed">
           <span className="text-gray-500 font-semibold">Scoring formula:</span> (Strategic Alignment × 25%) + (Revenue Potential × 20%) + (Customer Impact × 20%) + (Feasibility × 15%) + (Innovation Index × 10%) + (Resource Efficiency × 10%) = <span className="text-gold font-bold">{score}/100</span>
         </p>
+        <p className="text-[10px] text-gray-600 mt-1">
+          <span className="text-gold">⚙️</span> Weights are configured during client onboarding based on organisational priorities and scientific assessment frameworks. <a href="/settings" className="text-gold hover:text-gold-light underline">View scoring configuration</a>
+        </p>
       </div>
     </div>
   )
