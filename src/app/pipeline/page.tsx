@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import AuthLayout from '@/components/AuthLayout'
+import { useWorkspace } from '@/lib/workspace-context'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, AreaChart, Area, PieChart, Pie } from 'recharts'
 
 type TabType = 'overview' | 'business_case' | 'development' | 'impact'
@@ -145,7 +147,29 @@ const statusColor: Record<string, string> = {
 }
 
 function PipelineContent() {
+  const { workspaceId } = useWorkspace()
   const [activeTab, setActiveTab] = useState<TabType>('overview')
+  const [ideaMap, setIdeaMap] = useState<Record<string, string>>({})
+
+  // Fetch real ideas to map titles → IDs for linking
+  useEffect(() => {
+    if (!workspaceId) return
+    fetch(`/api/ideas?workspace_id=${workspaceId}`)
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const map: Record<string, string> = {}
+          data.forEach((idea: { id: string; title: string }) => { map[idea.title] = idea.id })
+          setIdeaMap(map)
+        }
+      })
+      .catch(() => {})
+  }, [workspaceId])
+
+  const getIdeaLink = (title: string) => {
+    const id = ideaMap[title]
+    return id ? `/idea-engine/${id}` : '/idea-engine'
+  }
 
   const tabs = [
     { id: 'overview' as TabType, label: 'Overview', icon: '📊' },
@@ -325,11 +349,11 @@ function PipelineContent() {
             </div>
           </div>
           {businessCases.map(bc => (
-            <div key={bc.id} className="p-5 rounded-2xl bg-dark-card border border-dark-border">
+            <div key={bc.id} className="p-5 rounded-2xl bg-dark-card border border-dark-border hover:border-gold/20 transition-all">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-serif font-bold">{bc.title}</h3>
+                    <Link href={getIdeaLink(bc.title)} className="font-serif font-bold hover:text-gold transition-colors">{bc.title} →</Link>
                     <span className={`px-2 py-0.5 rounded-lg text-[10px] font-medium border ${bc.status === 'Approved' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-gold/20 text-gold border-gold/30'}`}>{bc.status}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -387,7 +411,7 @@ function PipelineContent() {
             <div key={proj.id} className="p-5 rounded-2xl bg-dark-card border border-dark-border">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="font-serif font-bold text-lg">{proj.title}</h3>
+                  <Link href={getIdeaLink(proj.title)} className="font-serif font-bold text-lg hover:text-gold transition-colors">{proj.title} →</Link>
                   <p className="text-xs text-gray-500">{proj.department} • {proj.sprint} • Team: {proj.team_size} members</p>
                 </div>
                 <span className={`px-3 py-1 rounded-xl text-sm font-bold ${proj.status === 'On Track' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'}`}>{proj.status}</span>
@@ -488,7 +512,7 @@ function PipelineContent() {
             <div key={proj.id} className="p-5 rounded-2xl bg-dark-card border border-dark-border">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="font-serif font-bold text-lg">{proj.title}</h3>
+                  <Link href={getIdeaLink(proj.title)} className="font-serif font-bold text-lg hover:text-gold transition-colors">{proj.title} →</Link>
                   <p className="text-xs text-gray-500">{proj.department} • Deployed {proj.deployed_date} • {proj.months_live} months live</p>
                 </div>
                 <div className="text-center">
