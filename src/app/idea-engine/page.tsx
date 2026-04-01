@@ -5,6 +5,7 @@ import AuthLayout from '@/components/AuthLayout'
 import { useWorkspace } from '@/lib/workspace-context'
 import { DataSourcesPanel, DataSourcesBadge } from '@/components/DataSources'
 import { ScoreBreakdownPanel } from '@/components/ScoreBreakdown'
+import { DataInsightsPanel } from '@/components/DataInsights'
 
 const departments = [
   'Engineering', 'Product', 'Marketing', 'Sales', 'Operations',
@@ -293,6 +294,9 @@ function IdeaEngineContent() {
                           <p className="text-gold text-xs uppercase tracking-wider font-semibold mb-2">AI Summary</p>
                           <p className="text-gray-300 leading-relaxed">{idea.ai_summary}</p>
                         </div>
+
+                        {/* ERP + Sentiment Insights */}
+                        <DataInsightsPanel title={idea.title} category={idea.category} department={idea.department} score={idea.impact_score} />
 
                         {/* Data Sources */}
                         <DataSourcesPanel />
