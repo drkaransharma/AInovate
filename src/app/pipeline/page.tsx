@@ -146,11 +146,11 @@ const statusColor: Record<string, string> = {
 function PipelineContent() {
   const [activeTab, setActiveTab] = useState<TabType>('overview')
 
-  const tabs: { id: TabType; label: string; icon: string }[] = [
-    { id: 'overview', label: 'Overview', icon: '📊' },
-    { id: 'business_case', label: 'Business Cases', icon: '📋' },
-    { id: 'development', label: 'Development', icon: '🔧' },
-    { id: 'impact', label: 'ROI / Impact Meter', icon: '🎯' },
+  const tabs = [
+    { id: 'overview' as TabType, label: 'Overview', icon: '📊' },
+    { id: 'business_case' as TabType, label: 'Business Cases', icon: '📋' },
+    { id: 'development' as TabType, label: 'Development', icon: '🔧' },
+    { id: 'impact' as TabType, label: 'ROI / Impact Meter', icon: '🎯' },
   ]
 
   const totalInvested = 485000 + 620000 + 350000 + 280000 + 195000
@@ -227,9 +227,10 @@ function PipelineContent() {
                       <span className="text-xs text-gray-400">{step.label}</span>
                       <span className="text-xs font-bold text-white">{step.count}</span>
                     </div>
-                  <div className="h-6 bg-dark-border rounded-lg overflow-hidden">
-                    <div className={`h-full ${step.color} rounded-lg flex items-center px-2 transition-all`} style={{ width: step.width, minWidth: '40px' }}>
-                      <span className="text-[10px] font-bold text-black">{step.count}</span>
+                    <div className="h-6 bg-dark-border rounded-lg overflow-hidden">
+                      <div className={`h-full ${step.color} rounded-lg flex items-center px-2 transition-all`} style={{ width: step.width, minWidth: '40px' }}>
+                        <span className="text-[10px] font-bold text-black">{step.count}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
