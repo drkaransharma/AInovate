@@ -214,7 +214,7 @@ function PipelineContent() {
                 { label: 'Leadership Approved', count: 5, width: '6%', color: 'bg-green-400', dropoff: '2 under review — awaiting Q2 budget committee (1), pending COO sign-off on resource allocation (1)', dropCount: 2 },
                 { label: 'In Development', count: 3, width: '4%', color: 'bg-cyan-400', dropoff: '2 approved but queued — dev team at capacity, scheduled for Q3 sprint planning', dropCount: 2 },
                 { label: 'Live & Measuring ROI', count: 2, width: '2.5%', color: 'bg-emerald-400', dropoff: '1 in active development — expected deployment Apr 30', dropCount: 1 },
-              ].map((step, i) => (
+              ].map((step) => (
                 <div key={step.label}>
                   {step.dropoff && (
                     <div className="flex items-center gap-2 py-2 pl-4 ml-3 border-l-2 border-red-500/20">
