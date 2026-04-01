@@ -4,154 +4,174 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import AuthLayout from '@/components/AuthLayout'
 import { useWorkspace } from '@/lib/workspace-context'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, AreaChart, Area, PieChart, Pie } from 'recharts'
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, PieChart, Pie, Cell, BarChart, Bar, Tooltip } from 'recharts'
 
-type TabType = 'overview' | 'business_case' | 'development' | 'impact'
+// ── Pipeline Stages ──
+const STAGES = [
+  { id: 'all', label: 'All', icon: '📋', color: 'text-gold border-gold/30 bg-gold/10' },
+  { id: 'idea', label: 'Idea', icon: '💡', color: 'text-blue-400 border-blue-500/30 bg-blue-500/10' },
+  { id: 'business_case', label: 'Business Case', icon: '📊', color: 'text-purple-400 border-purple-500/30 bg-purple-500/10' },
+  { id: 'approval', label: 'Approval', icon: '👔', color: 'text-orange-400 border-orange-500/30 bg-orange-500/10' },
+  { id: 'project', label: 'Project', icon: '🔧', color: 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10' },
+  { id: 'deployed', label: 'Deployed', icon: '🚀', color: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10' },
+]
 
-// ── Business Case Ideas (filtered from ideas that passed threshold) ──
-const businessCases = [
+interface PipelineItem {
+  id: string
+  title: string
+  department: string
+  priority: string
+  impact_score: number
+  stage: string
+  submitter: { name: string; empId: string; role: string }
+  // Business Case
+  investment?: string
+  expected_roi?: string
+  payback?: string
+  risk?: string
+  // Approval
+  approved_by?: string
+  approved_date?: string
+  approval_notes?: string
+  // Project
+  sprint?: string
+  progress?: number
+  team_size?: number
+  start_date?: string
+  target_date?: string
+  cost_spent?: string
+  cost_total?: string
+  milestones?: { name: string; done: boolean }[]
+  // Deployed / ROI
+  deployed_date?: string
+  months_live?: number
+  actual_roi?: number
+  target_roi?: number
+  revenue_impact?: string
+  cost_savings?: string
+  efficiency_gain?: string
+  customer_impact?: string
+  roi_trend?: number[]
+  metrics?: { label: string; target: string; actual: string; status: string }[]
+}
+
+// ── All 15 ideas mapped to pipeline stages ──
+const pipelineData: PipelineItem[] = [
+  // DEPLOYED (2) — with full ROI tracking
   {
-    id: '1', title: 'CRM Bot for Contract Renewals', department: 'Sales', priority: 'Critical', impact_score: 95,
-    submitter: { name: 'Fatima Al-Sayed', empId: 'EMP-4003', role: 'Sales Director' },
-    status: 'Approved',
-    investment: 'AED 350,000', expected_roi: '420%', payback: '4 months', risk: 'Low',
-    approved_by: 'CEO — Dr. Karan Sharma', approved_date: 'Feb 20, 2026',
-    notes: 'Immediate revenue impact. Top priority for Q1.',
-  },
-  {
-    id: '2', title: 'AI-Powered Customer Onboarding', department: 'Product', priority: 'Critical', impact_score: 92,
+    id: 'p1', title: 'AI-Powered Customer Onboarding', department: 'Product', priority: 'Critical', impact_score: 92, stage: 'deployed',
     submitter: { name: 'Aisha Rahman', empId: 'EMP-1042', role: 'Product Manager' },
-    status: 'Approved',
     investment: 'AED 485,000', expected_roi: '340%', payback: '6 months', risk: 'Low',
-    approved_by: 'CEO — Dr. Karan Sharma', approved_date: 'Jan 15, 2026',
-    notes: 'Strategic priority. Fast-track implementation.',
+    approved_by: 'CEO — Dr. Karan Sharma', approved_date: 'Jan 15, 2026', approval_notes: 'Strategic priority. Fast-track.',
+    sprint: 'Sprint 12', progress: 100, team_size: 6, start_date: 'Jan 22, 2026', target_date: 'Mar 15, 2026', cost_spent: 'AED 485,000', cost_total: 'AED 485,000',
+    milestones: [{ name: 'Design', done: true }, { name: 'Build', done: true }, { name: 'Test', done: true }, { name: 'Deploy', done: true }],
+    deployed_date: 'Mar 15, 2026', months_live: 3, actual_roi: 312, target_roi: 340,
+    revenue_impact: '+AED 1.2M ARR', cost_savings: 'AED 340K/yr', efficiency_gain: '42% faster onboarding', customer_impact: 'NPS +18',
+    roi_trend: [65, 120, 180, 245, 290, 312],
+    metrics: [
+      { label: 'Support Tickets Reduced', target: '40%', actual: '37%', status: 'on_track' },
+      { label: 'Onboarding Time', target: '7 days', actual: '6.2 days', status: 'exceeded' },
+      { label: 'Customer Satisfaction', target: '4.5/5', actual: '4.7/5', status: 'exceeded' },
+      { label: 'Churn Rate', target: '-25%', actual: '-31%', status: 'exceeded' },
+    ],
   },
   {
-    id: '3', title: 'Dynamic Pricing Engine', department: 'Finance', priority: 'Critical', impact_score: 91,
+    id: 'p2', title: 'Dynamic Pricing Engine', department: 'Finance', priority: 'Critical', impact_score: 91, stage: 'deployed',
     submitter: { name: 'Nadia Hussain', empId: 'EMP-7004', role: 'Financial Analyst' },
-    status: 'Approved',
     investment: 'AED 620,000', expected_roi: '280%', payback: '8 months', risk: 'Medium',
-    approved_by: 'CFO — Mark Thompson', approved_date: 'Dec 8, 2025',
-    notes: 'High revenue potential. Monitor competitor response.',
+    approved_by: 'CFO — Mark Thompson', approved_date: 'Dec 8, 2025', approval_notes: 'High revenue potential.',
+    sprint: 'Sprint 14', progress: 100, team_size: 4, start_date: 'Dec 15, 2025', target_date: 'Feb 28, 2026', cost_spent: 'AED 620,000', cost_total: 'AED 620,000',
+    milestones: [{ name: 'Design', done: true }, { name: 'Build', done: true }, { name: 'Test', done: true }, { name: 'Deploy', done: true }],
+    deployed_date: 'Feb 28, 2026', months_live: 4, actual_roi: 245, target_roi: 280,
+    revenue_impact: '+AED 2.8M ARR', cost_savings: 'AED 180K/yr', efficiency_gain: '3.2x pricing speed', customer_impact: 'Win rate +8%',
+    roi_trend: [30, 85, 140, 190, 225, 245],
+    metrics: [
+      { label: 'Revenue Uplift', target: '+18%', actual: '+14%', status: 'on_track' },
+      { label: 'Deal Win Rate', target: '+10%', actual: '+8%', status: 'on_track' },
+      { label: 'Margin Improvement', target: '+5%', actual: '+6.2%', status: 'exceeded' },
+    ],
   },
+  // PROJECT (1) — in development
   {
-    id: '4', title: 'Predictive Inventory Management', department: 'Operations', priority: 'High', impact_score: 87,
+    id: 'p3', title: 'CRM Bot for Contract Renewals', department: 'Sales', priority: 'Critical', impact_score: 95, stage: 'project',
+    submitter: { name: 'Fatima Al-Sayed', empId: 'EMP-4003', role: 'Sales Director' },
+    investment: 'AED 350,000', expected_roi: '420%', payback: '4 months', risk: 'Low',
+    approved_by: 'CEO — Dr. Karan Sharma', approved_date: 'Feb 20, 2026', approval_notes: 'Top priority for Q1.',
+    sprint: 'Sprint 8', progress: 68, team_size: 5, start_date: 'Mar 1, 2026', target_date: 'Apr 30, 2026', cost_spent: 'AED 238,000', cost_total: 'AED 350,000',
+    milestones: [{ name: 'Architecture', done: true }, { name: 'Core Engine', done: true }, { name: 'CRM Integration', done: false }, { name: 'UAT & Deploy', done: false }],
+  },
+  // APPROVAL (2) — awaiting leadership
+  {
+    id: 'p4', title: 'Predictive Inventory Management', department: 'Operations', priority: 'High', impact_score: 87, stage: 'approval',
     submitter: { name: 'Lisa Chen', empId: 'EMP-2031', role: 'Supply Chain Manager' },
-    status: 'Under Review',
     investment: 'AED 410,000', expected_roi: '260%', payback: '10 months', risk: 'Medium',
-    approved_by: '', approved_date: '',
-    notes: 'Pending COO review. Scheduled for Mar 28 leadership meeting.',
+    approval_notes: 'Pending COO review — scheduled Mar 28 leadership meeting.',
   },
   {
-    id: '5', title: 'Supply Chain Risk Monitor', department: 'Operations', priority: 'High', impact_score: 85,
-    submitter: { name: 'Omar Hassan', empId: 'EMP-2015', role: 'Operations Lead' },
-    status: 'Approved',
-    investment: 'AED 280,000', expected_roi: '210%', payback: '9 months', risk: 'Medium',
-    approved_by: 'COO — Lisa Chen', approved_date: 'Feb 5, 2026',
-    notes: 'Critical for supply chain resilience.',
-  },
-  {
-    id: '6', title: 'Automated Code Review Pipeline', department: 'Engineering', priority: 'High', impact_score: 83,
-    submitter: { name: 'Mohammed Al-Rashid', empId: 'EMP-5002', role: 'Engineering Manager' },
-    status: 'Approved',
-    investment: 'AED 195,000', expected_roi: '180%', payback: '7 months', risk: 'Low',
-    approved_by: 'CTO — Sarah Kim', approved_date: 'Mar 10, 2026',
-    notes: 'Schedule for Q2. Assign DevOps team.',
-  },
-  {
-    id: '7', title: 'Customer Feedback Loop Automation', department: 'Customer Success', priority: 'High', impact_score: 80,
+    id: 'p5', title: 'Customer Feedback Loop Automation', department: 'Customer Success', priority: 'High', impact_score: 80, stage: 'approval',
     submitter: { name: 'Emily Zhang', empId: 'EMP-6008', role: 'CS Team Lead' },
-    status: 'Under Review',
     investment: 'AED 165,000', expected_roi: '190%', payback: '6 months', risk: 'Low',
-    approved_by: '', approved_date: '',
-    notes: 'Strong business case. Awaiting VP Customer Success sign-off.',
+    approval_notes: 'Strong business case. Awaiting VP sign-off.',
+  },
+  // BUSINESS CASE (3) — case prepared
+  {
+    id: 'p6', title: 'Supply Chain Risk Monitor', department: 'Operations', priority: 'High', impact_score: 85, stage: 'business_case',
+    submitter: { name: 'Omar Hassan', empId: 'EMP-2015', role: 'Operations Lead' },
+    investment: 'AED 280,000', expected_roi: '210%', payback: '9 months', risk: 'Medium',
+  },
+  {
+    id: 'p7', title: 'Automated Code Review Pipeline', department: 'Engineering', priority: 'High', impact_score: 83, stage: 'business_case',
+    submitter: { name: 'Mohammed Al-Rashid', empId: 'EMP-5002', role: 'Engineering Manager' },
+    investment: 'AED 195,000', expected_roi: '180%', payback: '7 months', risk: 'Low',
+  },
+  {
+    id: 'p8', title: 'Employee Wellness Dashboard', department: 'HR', priority: 'High', impact_score: 78, stage: 'business_case',
+    submitter: { name: 'Priya Kapoor', empId: 'EMP-3007', role: 'HR Business Partner' },
+    investment: 'AED 220,000', expected_roi: '150%', payback: '11 months', risk: 'Medium',
+  },
+  // IDEA (7) — scored but not yet business case
+  {
+    id: 'p9', title: 'Internal Knowledge Base AI', department: 'HR', priority: 'Medium', impact_score: 74, stage: 'idea',
+    submitter: { name: 'David Okonkwo', empId: 'EMP-3019', role: 'L&D Specialist' },
+  },
+  {
+    id: 'p10', title: 'Personalised Learning Pathways', department: 'HR', priority: 'Medium', impact_score: 72, stage: 'idea',
+    submitter: { name: 'Priya Kapoor', empId: 'EMP-3007', role: 'HR Business Partner' },
+  },
+  {
+    id: 'p11', title: 'Green Energy Transition Plan', department: 'Operations', priority: 'Medium', impact_score: 71, stage: 'idea',
+    submitter: { name: 'Omar Hassan', empId: 'EMP-2015', role: 'Operations Lead' },
+  },
+  {
+    id: 'p12', title: 'AR Product Demos', department: 'Marketing', priority: 'Medium', impact_score: 68, stage: 'idea',
+    submitter: { name: 'Sophie Laurent', empId: 'EMP-8006', role: 'Marketing Manager' },
+  },
+  {
+    id: 'p13', title: 'Meeting Intelligence Assistant', department: 'Engineering', priority: 'Medium', impact_score: 65, stage: 'idea',
+    submitter: { name: 'Sarah Kim', empId: 'EMP-5014', role: 'Senior Developer' },
+  },
+  {
+    id: 'p14', title: 'Office Space Utilization Tracker', department: 'Operations', priority: 'Low', impact_score: 52, stage: 'idea',
+    submitter: { name: 'Omar Hassan', empId: 'EMP-2015', role: 'Operations Lead' },
+  },
+  {
+    id: 'p15', title: 'Internal Social Innovation Feed', department: 'HR', priority: 'Low', impact_score: 44, stage: 'idea',
+    submitter: { name: 'David Okonkwo', empId: 'EMP-3019', role: 'L&D Specialist' },
   },
 ]
 
-// ── Development Projects ──
-const devProjects = [
-  {
-    id: 'd1', title: 'CRM Bot for Contract Renewals', department: 'Sales', investment: 'AED 350,000',
-    sprint: 'Sprint 8', progress: 68, team_size: 5, start: 'Mar 1, 2026', target: 'Apr 30, 2026', status: 'On Track',
-    milestones: [
-      { name: 'Architecture & Design', progress: 100, date: 'Mar 8' },
-      { name: 'Core Bot Engine', progress: 100, date: 'Mar 22' },
-      { name: 'CRM Integration', progress: 85, date: 'Apr 5' },
-      { name: 'Dynamic Pricing Logic', progress: 40, date: 'Apr 18' },
-      { name: 'UAT & Deployment', progress: 0, date: 'Apr 30' },
-    ],
-    cost_spent: 'AED 238,000', cost_remaining: 'AED 112,000', budget_status: 'On Budget',
-  },
-  {
-    id: 'd2', title: 'Supply Chain Risk Monitor', department: 'Operations', investment: 'AED 280,000',
-    sprint: 'Sprint 6', progress: 42, team_size: 3, start: 'Feb 15, 2026', target: 'May 15, 2026', status: 'On Track',
-    milestones: [
-      { name: 'Data Pipeline Setup', progress: 100, date: 'Mar 1' },
-      { name: 'Risk Scoring Model', progress: 75, date: 'Mar 20' },
-      { name: 'Alert Engine', progress: 20, date: 'Apr 10' },
-      { name: 'Dashboard & Reporting', progress: 0, date: 'Apr 28' },
-      { name: 'Testing & Go-Live', progress: 0, date: 'May 15' },
-    ],
-    cost_spent: 'AED 117,600', cost_remaining: 'AED 162,400', budget_status: 'On Budget',
-  },
-  {
-    id: 'd3', title: 'Automated Code Review Pipeline', department: 'Engineering', investment: 'AED 195,000',
-    sprint: 'Sprint 2', progress: 15, team_size: 4, start: 'Mar 18, 2026', target: 'Jun 1, 2026', status: 'Just Started',
-    milestones: [
-      { name: 'Tool Selection & Setup', progress: 60, date: 'Mar 28' },
-      { name: 'Rule Engine Configuration', progress: 0, date: 'Apr 15' },
-      { name: 'CI/CD Integration', progress: 0, date: 'May 5' },
-      { name: 'Team Training & Rollout', progress: 0, date: 'May 25' },
-      { name: 'Monitoring & Optimization', progress: 0, date: 'Jun 1' },
-    ],
-    cost_spent: 'AED 29,250', cost_remaining: 'AED 165,750', budget_status: 'On Budget',
-  },
-]
-
-// ── ROI / Impact Meter Projects ──
-const roiProjects = [
-  {
-    id: 'r1', title: 'AI-Powered Customer Onboarding', department: 'Product', investment: 'AED 485,000',
-    deployed_date: 'Mar 15, 2026', months_live: 3,
-    actual_roi: 312, target_roi: 340,
-    revenue_impact: '+AED 1.2M ARR', cost_savings: 'AED 340K/year', efficiency_gain: '42% faster onboarding', customer_impact: 'NPS +18 points',
-    metrics: [
-      { label: 'Support Tickets Reduced', target: '40%', actual: '37%', progress: 92, status: 'on_track' },
-      { label: 'Onboarding Time', target: '7 days', actual: '6.2 days', progress: 112, status: 'exceeded' },
-      { label: 'Customer Satisfaction', target: '4.5/5', actual: '4.7/5', progress: 104, status: 'exceeded' },
-      { label: 'Revenue per Customer', target: '+15%', actual: '+12%', progress: 80, status: 'on_track' },
-      { label: 'Churn Rate Reduction', target: '-25%', actual: '-31%', progress: 124, status: 'exceeded' },
-    ],
-    trend: [65, 120, 180, 245, 290, 312],
-  },
-  {
-    id: 'r2', title: 'Dynamic Pricing Engine', department: 'Finance', investment: 'AED 620,000',
-    deployed_date: 'Feb 28, 2026', months_live: 4,
-    actual_roi: 245, target_roi: 280,
-    revenue_impact: '+AED 2.8M ARR', cost_savings: 'AED 180K/year', efficiency_gain: '3.2x pricing iterations', customer_impact: 'Win rate +8%',
-    metrics: [
-      { label: 'Revenue Uplift', target: '+18%', actual: '+14%', progress: 78, status: 'on_track' },
-      { label: 'Price Optimization Speed', target: 'Real-time', actual: 'Real-time', progress: 100, status: 'exceeded' },
-      { label: 'Deal Win Rate', target: '+10%', actual: '+8%', progress: 80, status: 'on_track' },
-      { label: 'Margin Improvement', target: '+5%', actual: '+6.2%', progress: 124, status: 'exceeded' },
-    ],
-    trend: [30, 85, 140, 190, 225, 245],
-  },
-]
-
-const statusColor: Record<string, string> = {
-  exceeded: 'bg-green-500/20 text-green-400 border-green-500/30',
-  on_track: 'bg-gold/20 text-gold border-gold/30',
-  at_risk: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-  behind: 'bg-red-500/20 text-red-400 border-red-500/30',
+const priorityColor: Record<string, string> = {
+  Critical: 'bg-red-500/20 text-red-400 border-red-500/30',
+  High: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+  Medium: 'bg-gold/20 text-gold border-gold/30',
+  Low: 'bg-green-500/20 text-green-400 border-green-500/30',
 }
 
 function PipelineContent() {
   const { workspaceId } = useWorkspace()
-  const [activeTab, setActiveTab] = useState<TabType>('overview')
+  const [selectedStage, setSelectedStage] = useState('all')
   const [ideaMap, setIdeaMap] = useState<Record<string, string>>({})
 
-  // Fetch real ideas to map titles → IDs for linking
   useEffect(() => {
     if (!workspaceId) return
     fetch(`/api/ideas?workspace_id=${workspaceId}`)
@@ -166,436 +186,210 @@ function PipelineContent() {
       .catch(() => {})
   }, [workspaceId])
 
-  const getIdeaLink = (title: string) => {
-    const id = ideaMap[title]
-    return id ? `/idea-engine/${id}` : '/idea-engine'
-  }
+  const getLink = (title: string) => ideaMap[title] ? `/idea-engine/${ideaMap[title]}` : '/idea-engine'
+  const filtered = selectedStage === 'all' ? pipelineData : pipelineData.filter(i => i.stage === selectedStage)
 
-  const tabs = [
-    { id: 'overview' as TabType, label: 'Overview', icon: '📊' },
-    { id: 'business_case' as TabType, label: 'Business Cases', icon: '📋' },
-    { id: 'development' as TabType, label: 'Development', icon: '🔧' },
-    { id: 'impact' as TabType, label: 'ROI / Impact Meter', icon: '🎯' },
-  ]
-
-  const totalInvested = 485000 + 620000 + 350000 + 280000 + 195000
-  const totalReturns = 1200000 + 2800000 + 340000 + 180000
+  const stageCounts = STAGES.slice(1).map(s => ({ ...s, count: pipelineData.filter(i => i.stage === s.id).length }))
+  const totalInvested = pipelineData.filter(i => i.investment).reduce((s, i) => s + parseInt(i.investment!.replace(/[^0-9]/g, '') || '0'), 0)
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="mb-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold/30 bg-gold/5 mb-4">
-          <span className="text-gold text-sm">🎯 Innovation Pulse</span>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-serif font-bold">Innovation Pulse</h1>
+          <p className="text-gray-500 text-sm">Track every idea from concept to deployed ROI</p>
         </div>
-        <h1 className="text-4xl font-serif font-bold mb-3">Innovation Pulse</h1>
-        <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
-          <h2 className="text-base font-serif font-bold text-gold mb-2">What is the Impact Meter?</h2>
-          <p className="text-gray-400 text-sm leading-relaxed">
-            The Impact Meter tracks every idea that passed the scoring threshold through its full lifecycle — from business case and leadership approval, through development with cost tracking and project timelines, to live ROI measurement with real performance metrics. This is where innovation investment becomes measurable business value.
-          </p>
+        <div className="flex gap-3 text-center">
+          <div className="px-4 py-2 rounded-xl bg-dark-card border border-dark-border">
+            <p className="text-lg font-serif font-bold text-gold">{pipelineData.length}</p>
+            <p className="text-[10px] text-gray-500">In Pipeline</p>
+          </div>
+          <div className="px-4 py-2 rounded-xl bg-dark-card border border-dark-border">
+            <p className="text-lg font-serif font-bold text-emerald-400">AED {(totalInvested / 1000000).toFixed(1)}M</p>
+            <p className="text-[10px] text-gray-500">Invested</p>
+          </div>
+          <div className="px-4 py-2 rounded-xl bg-dark-card border border-dark-border">
+            <p className="text-lg font-serif font-bold text-green-400">278%</p>
+            <p className="text-[10px] text-gray-500">Avg ROI</p>
+          </div>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 mb-8 overflow-x-auto pb-2">
-        {tabs.map(tab => (
-          <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-gold/10 text-gold border border-gold/30' : 'text-gray-400 hover:text-white hover:bg-dark-hover'}`}>
-            <span>{tab.icon}</span> {tab.label}
-          </button>
+      {/* Stage Flow Filter */}
+      <div className="flex items-center gap-1 mb-6 p-3 rounded-2xl bg-dark-card border border-dark-border overflow-x-auto">
+        {STAGES.map((stage, i) => (
+          <div key={stage.id} className="flex items-center gap-1 shrink-0">
+            <button
+              onClick={() => setSelectedStage(stage.id)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${selectedStage === stage.id ? `border ${stage.color}` : 'text-gray-500 hover:text-white hover:bg-dark-hover'}`}
+            >
+              <span>{stage.icon}</span>
+              <span>{stage.label}</span>
+              {stage.id !== 'all' && (
+                <span className="px-1.5 py-0.5 rounded-md bg-dark-border text-[10px] text-gray-400">
+                  {pipelineData.filter(p => p.stage === stage.id).length}
+                </span>
+              )}
+            </button>
+            {i > 0 && i < STAGES.length - 1 && <span className="text-gray-700">→</span>}
+          </div>
         ))}
       </div>
 
-      {/* ═══ OVERVIEW ═══ */}
-      {activeTab === 'overview' && (
-        <div className="space-y-6">
-          {/* KPIs */}
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-            {[
-              { label: 'Biz Cases', value: businessCases.length, color: 'text-gold' },
-              { label: 'Approved', value: businessCases.filter(b => b.status === 'Approved').length, color: 'text-green-400' },
-              { label: 'In Dev', value: devProjects.length, color: 'text-cyan-400' },
-              { label: 'Live', value: roiProjects.length, color: 'text-emerald-400' },
-              { label: 'Invested', value: `${(totalInvested / 1000000).toFixed(1)}M`, color: 'text-gold' },
-              { label: 'Returns', value: `${(totalReturns / 1000000).toFixed(1)}M`, color: 'text-green-400' },
-            ].map(kpi => (
-              <div key={kpi.label} className="p-3 rounded-2xl bg-dark-card border border-dark-border text-center">
-                <p className="text-[10px] text-gray-500 uppercase">{kpi.label}</p>
-                <p className={`text-xl font-serif font-bold ${kpi.color}`}>{kpi.value}</p>
-              </div>
-            ))}
+      {/* Visual Funnel (only on "All") */}
+      {selectedStage === 'all' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
+            <h3 className="text-sm font-serif font-bold mb-3">Pipeline Funnel</h3>
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={stageCounts} layout="vertical" margin={{ left: 5, right: 20, top: 5, bottom: 5 }}>
+                <XAxis type="number" hide />
+                <YAxis type="category" dataKey="label" width={80} tick={{ fontSize: 10, fill: '#999' }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '12px', color: '#fff' }} />
+                <Bar dataKey="count" radius={[0, 6, 6, 0]} barSize={18}>
+                  {stageCounts.map((_, i) => (<Cell key={i} fill={['#60a5fa', '#a78bfa', '#fb923c', '#22d3ee', '#34d399'][i]} />))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-
-          {/* Funnel Chart + ROI Trend */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
-              <h3 className="text-sm font-serif font-bold mb-3">Innovation Funnel</h3>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={[
-                  { stage: 'Submitted', count: 84, fill: '#60a5fa' },
-                  { stage: 'Analyzed', count: 84, fill: '#93c5fd' },
-                  { stage: 'Threshold', count: 12, fill: '#a78bfa' },
-                  { stage: 'Biz Case', count: 7, fill: '#FFD246' },
-                  { stage: 'Approved', count: 5, fill: '#4ade80' },
-                  { stage: 'In Dev', count: 3, fill: '#22d3ee' },
-                  { stage: 'Live', count: 2, fill: '#34d399' },
-                ]} layout="vertical" margin={{ left: 5, right: 20, top: 5, bottom: 5 }}>
-                  <XAxis type="number" hide />
-                  <YAxis type="category" dataKey="stage" width={60} tick={{ fontSize: 10, fill: '#999' }} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '12px', color: '#fff' }} />
-                  <Bar dataKey="count" radius={[0, 6, 6, 0]} barSize={16}>
-                    {[
-                      { fill: '#60a5fa' }, { fill: '#93c5fd' }, { fill: '#a78bfa' },
-                      { fill: '#FFD246' }, { fill: '#4ade80' }, { fill: '#22d3ee' }, { fill: '#34d399' },
-                    ].map((entry, i) => (<Cell key={i} fill={entry.fill} />))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-              <p className="text-[10px] text-gray-600 mt-2">84 ideas → 12 passed threshold → 7 business cases → 2 live with ROI</p>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
-              <h3 className="text-sm font-serif font-bold mb-1">Portfolio ROI Trend</h3>
-              <p className="text-[10px] text-gray-500 mb-3">Monthly portfolio return on innovation investment</p>
-              <ResponsiveContainer width="100%" height={200}>
-                <AreaChart data={[
-                  { m: 'Oct', roi: 0 }, { m: 'Nov', roi: 65 }, { m: 'Dec', roi: 120 },
-                  { m: 'Jan', roi: 180 }, { m: 'Feb', roi: 230 }, { m: 'Mar', roi: 278 },
-                ]} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
-                  <defs>
-                    <linearGradient id="pRoiGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#34d399" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="m" tick={{ fontSize: 10, fill: '#666' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: '#444' }} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '12px', color: '#fff' }} formatter={(v) => `${v}%`} />
-                  <Area type="monotone" dataKey="roi" stroke="#34d399" fill="url(#pRoiGrad)" strokeWidth={2} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Drop-off Reasons Donut + List */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="p-5 rounded-2xl bg-dark-card border border-dark-border flex flex-col items-center justify-center">
-              <h3 className="text-sm font-serif font-bold mb-2">Drop-off Breakdown</h3>
-              <ResponsiveContainer width={160} height={160}>
-                <PieChart>
-                  <Pie data={[
-                    { name: 'Below Threshold', value: 72 },
-                    { name: 'Budget Timing', value: 8 },
-                    { name: 'Resources', value: 4 },
-                    { name: 'Duplicate', value: 3 },
-                    { name: 'Other', value: 3 },
-                  ]} cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={2} dataKey="value" stroke="none">
-                    <Cell fill="#f87171" /><Cell fill="#fb923c" /><Cell fill="#FFD246" /><Cell fill="#60a5fa" /><Cell fill="#666" />
-                  </Pie>
-                  <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '11px', color: '#fff' }} />
-                </PieChart>
-              </ResponsiveContainer>
-              <p className="text-[10px] text-gray-500">90 ideas filtered</p>
-            </div>
-            <div className="lg:col-span-2 p-5 rounded-2xl bg-dark-card border border-dark-border">
-              <h3 className="text-sm font-serif font-bold mb-3">Why Ideas Don&apos;t Advance</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { r: 'Below Threshold', c: 72, icon: '📊', color: 'text-red-400' },
-                  { r: 'Budget Timing', c: 8, icon: '💰', color: 'text-orange-400' },
-                  { r: 'Resource Constraints', c: 4, icon: '👥', color: 'text-gold' },
-                  { r: 'Duplicate Initiative', c: 3, icon: '🔄', color: 'text-blue-400' },
-                  { r: 'Regulatory Hold', c: 1, icon: '⚖️', color: 'text-gray-400' },
-                  { r: 'Org Restructure', c: 2, icon: '🏗️', color: 'text-gray-400' },
-                ].map(d => (
-                  <div key={d.r} className="flex items-center justify-between p-2.5 rounded-lg bg-black border border-dark-border">
-                    <span className="text-[11px] text-gray-300">{d.icon} {d.r}</span>
-                    <span className={`text-xs font-bold ${d.color}`}>{d.c}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="text-[10px] text-gray-600 mt-2">💡 Parked ideas remain in Idea &amp; Insight for re-evaluation</p>
-            </div>
-          </div>
-
-          {/* ROI Summary */}
-          <div className="p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
-            <h3 className="text-sm font-serif font-bold text-emerald-400 mb-3">Portfolio Impact</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {[
-                { l: 'Revenue Impact', v: '+AED 4.0M', c: 'text-green-400' },
-                { l: 'Cost Savings', v: 'AED 520K/yr', c: 'text-gold' },
-                { l: 'Avg ROI', v: '278%', c: 'text-emerald-400' },
-                { l: 'Avg Payback', v: '5.8 months', c: 'text-white' },
-              ].map(k => (
-                <div key={k.l} className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                  <p className="text-[10px] text-gray-500">{k.l}</p>
-                  <p className={`text-lg font-serif font-bold ${k.c}`}>{k.v}</p>
-                </div>
-              ))}
-            </div>
+          <div className="p-5 rounded-2xl bg-dark-card border border-dark-border">
+            <h3 className="text-sm font-serif font-bold mb-1">Portfolio ROI Trend</h3>
+            <ResponsiveContainer width="100%" height={180}>
+              <AreaChart data={[{ m: 'Oct', v: 0 }, { m: 'Nov', v: 65 }, { m: 'Dec', v: 120 }, { m: 'Jan', v: 180 }, { m: 'Feb', v: 230 }, { m: 'Mar', v: 278 }]} margin={{ left: 0, right: 10, top: 10, bottom: 5 }}>
+                <defs><linearGradient id="roiG" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#34d399" stopOpacity={0.3} /><stop offset="95%" stopColor="#34d399" stopOpacity={0} /></linearGradient></defs>
+                <XAxis dataKey="m" tick={{ fontSize: 10, fill: '#666' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: '#444' }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '12px', color: '#fff' }} formatter={(v) => `${v}%`} />
+                <Area type="monotone" dataKey="v" stroke="#34d399" fill="url(#roiG)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
       )}
 
-      {/* ═══ BUSINESS CASES ═══ */}
-      {activeTab === 'business_case' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl font-serif font-bold">Business Cases ({businessCases.length})</h2>
-            <div className="flex gap-2 text-xs">
-              <span className="px-2 py-1 rounded-lg bg-green-500/20 text-green-400 border border-green-500/30">✓ {businessCases.filter(b => b.status === 'Approved').length} Approved</span>
-              <span className="px-2 py-1 rounded-lg bg-gold/20 text-gold border border-gold/30">⏳ {businessCases.filter(b => b.status === 'Under Review').length} Under Review</span>
-            </div>
-          </div>
-          {businessCases.map(bc => (
-            <div key={bc.id} className="p-5 rounded-2xl bg-dark-card border border-dark-border hover:border-gold/20 transition-all">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+      {/* Items List */}
+      <div className="space-y-4">
+        {filtered.map(item => {
+          const stageInfo = STAGES.find(s => s.id === item.stage)!
+          return (
+            <div key={item.id} className="p-5 rounded-2xl bg-dark-card border border-dark-border hover:border-gold/20 transition-all">
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <Link href={getIdeaLink(bc.title)} className="font-serif font-bold hover:text-gold transition-colors">{bc.title} →</Link>
-                    <span className={`px-2 py-0.5 rounded-lg text-[10px] font-medium border ${bc.status === 'Approved' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-gold/20 text-gold border-gold/30'}`}>{bc.status}</span>
+                    <span className={`px-2 py-0.5 rounded-lg text-[10px] font-medium border ${stageInfo.color}`}>{stageInfo.icon} {stageInfo.label}</span>
+                    <Link href={getLink(item.title)} className="font-serif font-bold hover:text-gold transition-colors">{item.title} →</Link>
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${priorityColor[item.priority]}`}>{item.priority}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <span className="text-white font-medium">{bc.submitter.name}</span>
-                    <span className="text-gold font-mono">{bc.submitter.empId}</span>
-                    <span>{bc.department}</span>
-                    <span>Score: <span className="text-gold font-bold">{bc.impact_score}</span></span>
+                    <span className="text-white">{item.submitter.name}</span>
+                    <span className="text-gold font-mono">{item.submitter.empId}</span>
+                    <span>{item.department}</span>
+                    <span>Score: <span className="text-gold font-bold">{item.impact_score}</span></span>
                   </div>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  {item.progress !== undefined && item.stage === 'project' && (
+                    <div className="text-center"><p className="text-lg font-serif font-bold text-cyan-400">{item.progress}%</p><p className="text-[10px] text-gray-500">Progress</p></div>
+                  )}
+                  {item.actual_roi !== undefined && (
+                    <div className="text-center"><p className="text-lg font-serif font-bold text-emerald-400">{item.actual_roi}%</p><p className="text-[10px] text-gray-500">ROI</p></div>
+                  )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
-                <div className="p-3 rounded-xl bg-black border border-dark-border">
-                  <p className="text-[10px] text-gray-500 mb-1">Investment</p>
-                  <p className="text-sm font-bold text-gold">{bc.investment}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-black border border-dark-border">
-                  <p className="text-[10px] text-gray-500 mb-1">Expected ROI</p>
-                  <p className="text-sm font-bold text-green-400">{bc.expected_roi}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-black border border-dark-border">
-                  <p className="text-[10px] text-gray-500 mb-1">Payback</p>
-                  <p className="text-sm font-bold text-white">{bc.payback}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-black border border-dark-border">
-                  <p className="text-[10px] text-gray-500 mb-1">Risk</p>
-                  <p className={`text-sm font-bold ${bc.risk === 'Low' ? 'text-green-400' : 'text-gold'}`}>{bc.risk}</p>
-                </div>
-              </div>
-
-              {bc.status === 'Approved' && (
-                <div className="p-3 rounded-xl bg-green-500/5 border border-green-500/20">
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="text-green-400 font-medium">✓ Approved by {bc.approved_by}</span>
-                    <span className="text-gray-500">on {bc.approved_date}</span>
-                  </div>
-                  <p className="text-[11px] text-gray-400 mt-1 italic">&ldquo;{bc.notes}&rdquo;</p>
+              {/* Business Case Data (shown for business_case, approval, project, deployed) */}
+              {item.investment && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                  <div className="p-2 rounded-lg bg-black border border-dark-border"><p className="text-[10px] text-gray-500">Investment</p><p className="text-sm font-bold text-gold">{item.investment}</p></div>
+                  <div className="p-2 rounded-lg bg-black border border-dark-border"><p className="text-[10px] text-gray-500">Expected ROI</p><p className="text-sm font-bold text-green-400">{item.expected_roi}</p></div>
+                  <div className="p-2 rounded-lg bg-black border border-dark-border"><p className="text-[10px] text-gray-500">Payback</p><p className="text-sm font-bold text-white">{item.payback}</p></div>
+                  <div className="p-2 rounded-lg bg-black border border-dark-border"><p className="text-[10px] text-gray-500">Risk</p><p className={`text-sm font-bold ${item.risk === 'Low' ? 'text-green-400' : 'text-gold'}`}>{item.risk}</p></div>
                 </div>
               )}
-              {bc.status === 'Under Review' && (
-                <div className="p-3 rounded-xl bg-gold/5 border border-gold/20">
-                  <p className="text-[11px] text-gray-400 italic">⏳ {bc.notes}</p>
+
+              {/* Approval (shown for approval, project, deployed) */}
+              {item.approved_by && (
+                <div className="p-2.5 rounded-lg bg-green-500/5 border border-green-500/20 mb-3 flex items-center gap-2 text-xs">
+                  <span className="text-green-400">✓ {item.approved_by}</span>
+                  <span className="text-gray-500">{item.approved_date}</span>
+                  <span className="text-gray-500 italic">&ldquo;{item.approval_notes}&rdquo;</span>
+                </div>
+              )}
+              {item.approval_notes && !item.approved_by && (
+                <div className="p-2.5 rounded-lg bg-gold/5 border border-gold/20 mb-3 text-xs text-gray-400 italic">⏳ {item.approval_notes}</div>
+              )}
+
+              {/* Project Progress (shown for project, deployed) */}
+              {item.milestones && (
+                <div className="mb-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] text-gray-500">{item.sprint} • Team: {item.team_size} • {item.start_date} → {item.target_date}</span>
+                    <span className="text-xs font-bold text-gold">{item.progress}%</span>
+                  </div>
+                  <div className="h-2 bg-dark-border rounded-full overflow-hidden mb-2">
+                    <div className={`h-full rounded-full ${item.progress === 100 ? 'bg-green-400' : 'bg-gold'}`} style={{ width: `${item.progress}%` }} />
+                  </div>
+                  <div className="flex gap-2">
+                    {item.milestones.map(m => (
+                      <span key={m.name} className={`text-[10px] px-2 py-0.5 rounded ${m.done ? 'bg-green-500/20 text-green-400 line-through' : 'bg-dark-border text-gray-500'}`}>{m.name}</span>
+                    ))}
+                  </div>
+                  {item.cost_spent && (
+                    <div className="flex gap-3 mt-2 text-[10px] text-gray-500">
+                      <span>Budget: <span className="text-white">{item.cost_total}</span></span>
+                      <span>Spent: <span className="text-gold">{item.cost_spent}</span></span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Deployed ROI (shown for deployed) */}
+              {item.actual_roi !== undefined && item.roi_trend && (
+                <div className="p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                    <div className="p-2 rounded-lg bg-black border border-dark-border text-center"><p className="text-[10px] text-gray-500">Revenue</p><p className="text-xs font-bold text-green-400">{item.revenue_impact}</p></div>
+                    <div className="p-2 rounded-lg bg-black border border-dark-border text-center"><p className="text-[10px] text-gray-500">Savings</p><p className="text-xs font-bold text-gold">{item.cost_savings}</p></div>
+                    <div className="p-2 rounded-lg bg-black border border-dark-border text-center"><p className="text-[10px] text-gray-500">Efficiency</p><p className="text-xs font-bold text-cyan-400">{item.efficiency_gain}</p></div>
+                    <div className="p-2 rounded-lg bg-black border border-dark-border text-center"><p className="text-[10px] text-gray-500">Customer</p><p className="text-xs font-bold text-purple-400">{item.customer_impact}</p></div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <div className="flex justify-between text-[10px] text-gray-500 mb-1">
+                        <span>ROI: {item.actual_roi}% of {item.target_roi}% target</span>
+                        <span>{Math.round((item.actual_roi / item.target_roi!) * 100)}%</span>
+                      </div>
+                      <div className="h-2 bg-dark-border rounded-full overflow-hidden">
+                        <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${Math.min((item.actual_roi / item.target_roi!) * 100, 100)}%` }} />
+                      </div>
+                    </div>
+                    <ResponsiveContainer width={120} height={40}>
+                      <AreaChart data={item.roi_trend.map((v, i) => ({ m: i, v }))} margin={{ left: 0, right: 0, top: 2, bottom: 2 }}>
+                        <Area type="monotone" dataKey="v" stroke="#34d399" fill="#34d399" fillOpacity={0.1} strokeWidth={1.5} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                  {item.metrics && (
+                    <div className="mt-3 space-y-1">
+                      {item.metrics.map(m => (
+                        <div key={m.label} className="flex items-center justify-between text-[10px]">
+                          <span className="text-gray-400">{m.label}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500">Target: {m.target}</span>
+                            <span className={m.status === 'exceeded' ? 'text-green-400 font-bold' : 'text-gold font-bold'}>Actual: {m.actual}</span>
+                            <span className={`px-1.5 py-0.5 rounded text-[9px] ${m.status === 'exceeded' ? 'bg-green-500/20 text-green-400' : 'bg-gold/20 text-gold'}`}>{m.status === 'exceeded' ? '▲' : '●'}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          ))}
-        </div>
-      )}
-
-      {/* ═══ DEVELOPMENT ═══ */}
-      {activeTab === 'development' && (
-        <div className="space-y-6">
-          <h2 className="text-xl font-serif font-bold">In Development ({devProjects.length})</h2>
-          {devProjects.map(proj => (
-            <div key={proj.id} className="p-5 rounded-2xl bg-dark-card border border-dark-border">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <Link href={getIdeaLink(proj.title)} className="font-serif font-bold text-lg hover:text-gold transition-colors">{proj.title} →</Link>
-                  <p className="text-xs text-gray-500">{proj.department} • {proj.sprint} • Team: {proj.team_size} members</p>
-                </div>
-                <span className={`px-3 py-1 rounded-xl text-sm font-bold ${proj.status === 'On Track' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'}`}>{proj.status}</span>
-              </div>
-
-              {/* Progress bar */}
-              <div className="mb-5">
-                <div className="flex justify-between mb-1">
-                  <span className="text-xs text-gray-400">Overall Progress</span>
-                  <span className="text-sm font-bold text-gold">{proj.progress}%</span>
-                </div>
-                <div className="h-4 bg-dark-border rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-gold-dim to-gold rounded-full transition-all flex items-center justify-end pr-2" style={{ width: `${proj.progress}%`, minWidth: '30px' }}>
-                    <span className="text-[9px] font-bold text-black">{proj.progress}%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Milestones */}
-              <div className="mb-5">
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Milestones</p>
-                <div className="space-y-2">
-                  {proj.milestones.map(m => (
-                    <div key={m.name} className="flex items-center gap-3">
-                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] shrink-0 ${m.progress === 100 ? 'bg-green-500/20 text-green-400' : m.progress > 0 ? 'bg-gold/20 text-gold' : 'bg-dark-border text-gray-600'}`}>
-                        {m.progress === 100 ? '✓' : m.progress > 0 ? '◐' : '○'}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <span className={`text-xs ${m.progress === 100 ? 'text-gray-500 line-through' : 'text-white'}`}>{m.name}</span>
-                          <span className="text-[10px] text-gray-500">{m.date}</span>
-                        </div>
-                        <div className="h-1 bg-dark-border rounded-full overflow-hidden mt-1">
-                          <div className={`h-full rounded-full ${m.progress === 100 ? 'bg-green-400' : 'bg-gold'}`} style={{ width: `${m.progress}%` }} />
-                        </div>
-                      </div>
-                      <span className="text-[10px] text-gray-500 w-8 text-right shrink-0">{m.progress}%</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Cost & Timeline */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="p-3 rounded-xl bg-black border border-dark-border">
-                  <p className="text-[10px] text-gray-500 mb-1">Budget</p>
-                  <p className="text-sm font-bold text-gold">{proj.investment}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-black border border-dark-border">
-                  <p className="text-[10px] text-gray-500 mb-1">Spent</p>
-                  <p className="text-sm font-bold text-white">{proj.cost_spent}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-black border border-dark-border">
-                  <p className="text-[10px] text-gray-500 mb-1">Timeline</p>
-                  <p className="text-xs font-medium text-white">{proj.start} → {proj.target}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-black border border-dark-border">
-                  <p className="text-[10px] text-gray-500 mb-1">Budget Status</p>
-                  <p className="text-sm font-bold text-green-400">{proj.budget_status}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* ═══ ROI / IMPACT METER ═══ */}
-      {activeTab === 'impact' && (
-        <div className="space-y-6">
-          <h2 className="text-xl font-serif font-bold">ROI / Impact Meter</h2>
-          <p className="text-gray-500 text-sm -mt-4">Live performance tracking for deployed innovations. All metrics are measured against pre-defined targets from the business case.</p>
-
-          {/* Portfolio Summary */}
-          <div className="p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
-            <h3 className="text-sm font-serif font-bold text-emerald-400 mb-3">Portfolio Performance</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                <p className="text-[10px] text-gray-500 mb-1">Revenue Impact</p>
-                <p className="text-xl font-serif font-bold text-green-400">+AED 4.0M</p>
-              </div>
-              <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                <p className="text-[10px] text-gray-500 mb-1">Cost Savings</p>
-                <p className="text-xl font-serif font-bold text-gold">AED 520K/yr</p>
-              </div>
-              <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                <p className="text-[10px] text-gray-500 mb-1">Total Invested</p>
-                <p className="text-xl font-serif font-bold text-white">AED 1.1M</p>
-              </div>
-              <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                <p className="text-[10px] text-gray-500 mb-1">Avg ROI</p>
-                <p className="text-xl font-serif font-bold text-emerald-400">278%</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Individual Project ROI */}
-          {roiProjects.map(proj => (
-            <div key={proj.id} className="p-5 rounded-2xl bg-dark-card border border-dark-border">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <Link href={getIdeaLink(proj.title)} className="font-serif font-bold text-lg hover:text-gold transition-colors">{proj.title} →</Link>
-                  <p className="text-xs text-gray-500">{proj.department} • Deployed {proj.deployed_date} • {proj.months_live} months live</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-3xl font-serif font-bold text-emerald-400">{proj.actual_roi}%</p>
-                  <p className="text-[10px] text-gray-500">ROI achieved</p>
-                </div>
-              </div>
-
-              {/* ROI Gauge */}
-              <div className="mb-5">
-                <div className="flex justify-between mb-1">
-                  <span className="text-xs text-gray-400">ROI: {proj.actual_roi}% of {proj.target_roi}% target</span>
-                  <span className="text-xs text-gray-500">{Math.round((proj.actual_roi / proj.target_roi) * 100)}% to target</span>
-                </div>
-                <div className="h-4 bg-dark-border rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full" style={{ width: `${Math.min((proj.actual_roi / proj.target_roi) * 100, 100)}%` }} />
-                </div>
-              </div>
-
-              {/* Impact KPIs */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-                <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                  <p className="text-[10px] text-gray-500 mb-1">Revenue</p>
-                  <p className="text-sm font-bold text-green-400">{proj.revenue_impact}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                  <p className="text-[10px] text-gray-500 mb-1">Cost Savings</p>
-                  <p className="text-sm font-bold text-gold">{proj.cost_savings}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                  <p className="text-[10px] text-gray-500 mb-1">Efficiency</p>
-                  <p className="text-sm font-bold text-cyan-400">{proj.efficiency_gain}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-black border border-dark-border text-center">
-                  <p className="text-[10px] text-gray-500 mb-1">Customer</p>
-                  <p className="text-sm font-bold text-purple-400">{proj.customer_impact}</p>
-                </div>
-              </div>
-
-              {/* ROI Trend Chart */}
-              <div className="p-3 rounded-xl bg-black border border-dark-border mb-5">
-                <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-2">ROI Trend</p>
-                <ResponsiveContainer width="100%" height={100}>
-                  <AreaChart data={proj.trend.map((v, i) => ({ m: `M${i + 1}`, roi: v }))} margin={{ left: 0, right: 5, top: 5, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id={`roiG-${proj.id}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#34d399" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <XAxis dataKey="m" tick={{ fontSize: 9, fill: '#555' }} axisLine={false} tickLine={false} />
-                    <YAxis hide />
-                    <Area type="monotone" dataKey="roi" stroke="#34d399" fill={`url(#roiG-${proj.id})`} strokeWidth={2} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Individual Metrics */}
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Performance Metrics</p>
-              <div className="space-y-2">
-                {proj.metrics.map(m => (
-                  <div key={m.label} className="flex items-center justify-between p-3 rounded-xl bg-black border border-dark-border">
-                    <span className="text-xs text-white font-medium">{m.label}</span>
-                    <div className="flex items-center gap-3">
-                      <div className="text-right">
-                        <span className="text-[10px] text-gray-500">Target: </span>
-                        <span className="text-xs text-gray-400">{m.target}</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[10px] text-gray-500">Actual: </span>
-                        <span className={`text-xs font-bold ${m.status === 'exceeded' ? 'text-green-400' : 'text-gold'}`}>{m.actual}</span>
-                      </div>
-                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-medium border ${statusColor[m.status]}`}>
-                        {m.status === 'exceeded' ? '▲ Exceeded' : '● On Track'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+          )
+        })}
+      </div>
     </main>
   )
 }
