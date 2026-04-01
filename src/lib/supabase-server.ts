@@ -48,6 +48,7 @@ export async function getWorkspaceForUser(userId: string) {
   return {
     workspace_id: membership.workspace_id,
     role: membership.role,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     workspace: (membership as any).workspaces,
   }
 }

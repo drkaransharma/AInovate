@@ -44,17 +44,6 @@ function SettingsContent() {
 
   const isAdmin = role === 'owner' || role === 'admin'
 
-  useEffect(() => {
-    if (workspace) {
-      setWsName(workspace.name)
-      setWsIndustry(workspace.industry || '')
-    }
-    if (workspaceId) {
-      fetchMembers()
-      fetchInvites()
-    }
-  }, [workspace, workspaceId])
-
   const fetchMembers = async () => {
     const res = await fetch(`/api/workspaces/members?workspace_id=${workspaceId}`)
     const data = await res.json()
@@ -66,6 +55,18 @@ function SettingsContent() {
     const data = await res.json()
     if (Array.isArray(data)) setInvites(data)
   }
+
+  useEffect(() => {
+    if (workspace) {
+      setWsName(workspace.name)
+      setWsIndustry(workspace.industry || '')
+    }
+    if (workspaceId) {
+      fetchMembers()
+      fetchInvites()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace, workspaceId])
 
   const handleSaveWorkspace = async () => {
     if (!isAdmin) return

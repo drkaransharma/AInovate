@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
+          cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
           supabaseResponse = NextResponse.next({ request })
@@ -31,8 +31,7 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Allow public paths and API routes
-  const isPublic = publicPaths.some(p => pathname === p) || pathname.startsWith('/api/')
-  const isInvite = pathname.startsWith('/invite')
+  const isPublic = publicPaths.some(p => pathname === p) || pathname.startsWith('/api/') || pathname.startsWith('/invite')
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone()

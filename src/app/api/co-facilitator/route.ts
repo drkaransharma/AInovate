@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
           }
           controller.enqueue(encoder.encode('data: [DONE]\n\n'))
           controller.close()
-        } catch (err) {
+        } catch {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Stream error' })}\n\n`))
           controller.close()
         }

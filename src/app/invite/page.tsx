@@ -1,27 +1,31 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+
+interface Invite {
+  id: string
+  workspace_id: string
+  email: string
+  role: string
+  token: string
+  workspaces?: { name: string }
+}
 
 export default function InvitePage() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
   const router = useRouter()
   const supabase = createClient()
-  const [invite, setInvite] = useState<any>(null)
+  const [invite, setInvite] = useState<Invite | null>(null)
   const [loading, setLoading] = useState(true)
   const [accepting, setAccepting] = useState(false)
   const [error, setError] = useState('')
   const [needsAuth, setNeedsAuth] = useState(false)
 
-  useEffect(() => {
-    if (token) loadInvite()
-    else setLoading(false)
-  }, [token])
-
-  const loadInvite = async () => {
+  const loadInvite = useCallback(async () => {
     const { data } = await supabase
       .from('workspace_invites')
       .select('*, workspaces(name)')
@@ -30,13 +34,17 @@ export default function InvitePage() {
       .single()
 
     if (data) {
-      setInvite(data)
-      // Check if user is logged in
+      setInvite(data as unknown as Invite)
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) setNeedsAuth(true)
     }
     setLoading(false)
-  }
+  }, [token, supabase])
+
+  useEffect(() => {
+    if (token) loadInvite()
+    else setLoading(false)
+  }, [token, loadInvite])
 
   const handleAccept = async () => {
     setAccepting(true)
@@ -49,13 +57,12 @@ export default function InvitePage() {
       return
     }
 
-    // Add as workspace member
     const { error: memberErr } = await supabase
       .from('workspace_members')
       .insert({
         user_id: user.id,
-        workspace_id: invite.workspace_id,
-        role: invite.role,
+        workspace_id: invite!.workspace_id,
+        role: invite!.role,
       })
 
     if (memberErr) {
@@ -64,11 +71,10 @@ export default function InvitePage() {
       return
     }
 
-    // Mark invite as accepted
     await supabase
       .from('workspace_invites')
       .update({ accepted_at: new Date().toISOString() })
-      .eq('id', invite.id)
+      .eq('id', invite!.id)
 
     router.push('/dashboard')
     router.refresh()
@@ -105,7 +111,7 @@ export default function InvitePage() {
         <div className="p-8 rounded-2xl bg-dark-card border border-dark-border text-center">
           <h2 className="text-2xl font-serif font-bold mb-2">You&apos;re Invited</h2>
           <p className="text-gray-400 mb-6">
-            You&apos;ve been invited to join <span className="text-gold font-semibold">{(invite as any).workspaces?.name}</span> as a <span className="text-white font-medium">{invite.role}</span>.
+            You&apos;ve been invited to join <span className="text-gold font-semibold">{invite.workspaces?.name}</span> as a <span className="text-white font-medium">{invite.role}</span>.
           </p>
 
           {error && (

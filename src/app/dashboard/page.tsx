@@ -43,10 +43,6 @@ function DashboardContent() {
   const [priority, setPriority] = useState('')
   const [category, setCategory] = useState('')
 
-  useEffect(() => {
-    if (workspaceId) fetchIdeas()
-  }, [department, priority, category, workspaceId])
-
   const fetchIdeas = async () => {
     setLoading(true)
     try {
@@ -65,6 +61,11 @@ function DashboardContent() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (workspaceId) fetchIdeas()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [department, priority, category, workspaceId])
 
   const stats = {
     total: ideas.length,
