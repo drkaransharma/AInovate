@@ -118,13 +118,13 @@ function IdeaEngineContent() {
             <svg className="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
-            <span className="text-gold text-sm">AI-Powered</span>
+            <span className="text-gold text-sm">Innovation Capture</span>
           </div>
-          <h1 className="text-4xl font-serif font-bold mb-3">AI Idea Engine</h1>
+          <h1 className="text-4xl font-serif font-bold mb-3">Idea &amp; Insight</h1>
           <div className="p-6 rounded-2xl bg-dark-card border border-dark-border mb-6">
-            <h2 className="text-lg font-serif font-bold text-gold mb-3">What is the AI Idea Engine?</h2>
+            <h2 className="text-lg font-serif font-bold text-gold mb-3">What is Idea &amp; Insight?</h2>
             <p className="text-gray-400 leading-relaxed mb-4">
-              The AI Idea Engine is your organisation&apos;s innovation capture system. Anyone in your workspace can submit ideas in plain language — no templates, no forms, no bureaucracy. Our AI instantly analyzes each idea and provides:
+              Idea &amp; Insight is your organisation&apos;s innovation capture and intelligence system. Ideas are collected from employees, analyzed against your ERP data, customer sentiment from social media and feedback channels, and enriched with AI-driven insights. Every idea is automatically scored using data from 6 integrated sources:
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {[

@@ -6,10 +6,9 @@ import { useWorkspace } from '@/lib/workspace-context'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard' },
-  { href: '/idea-engine', label: 'AI Idea Engine' },
+  { href: '/idea-engine', label: 'Idea & Insight' },
   { href: '/pipeline', label: 'Pipeline' },
   { href: '/co-facilitator', label: 'AI Academy' },
-  { href: '/sentiment', label: 'Sentiment Pulse' },
   { href: '/settings', label: 'Settings' },
 ]
 

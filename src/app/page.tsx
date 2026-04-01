@@ -2,8 +2,8 @@ import Link from 'next/link'
 
 const modules = [
   {
-    title: 'AI Idea Engine',
-    description: 'Submit ideas in plain language. Our AI auto-tags category, priority, and impact score instantly.',
+    title: 'Idea & Insight',
+    description: 'Capture ideas from employees, analyze against ERP data and customer sentiment from social media and feedback channels. AI scores every idea using 6 integrated data sources.',
     href: '/idea-engine',
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -12,18 +12,18 @@ const modules = [
     ),
   },
   {
-    title: 'Idea Dashboard',
-    description: 'Browse, filter, and manage all ideas across departments with real-time priority insights.',
-    href: '/dashboard',
+    title: 'Innovation Pipeline',
+    description: 'Track ideas from business case to leadership approval, development, and ROI measurement. Full lifecycle management with value metrics.',
+    href: '/pipeline',
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
       </svg>
     ),
   },
   {
     title: 'AI Academy',
-    description: 'Empower your employees with hands-on innovation skills. AI-guided learning sessions that build problem-solving capabilities using real business challenges.',
+    description: 'Micro LMS that empowers employees with innovation and problem-solving skills. AI-guided Design Thinking sessions, training courses, and simulation assessments.',
     href: '/co-facilitator',
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,12 +32,12 @@ const modules = [
     ),
   },
   {
-    title: 'Sentiment Pulse',
-    description: 'Analyze text for sentiment, inclusion risk, and get AI-powered recommendations.',
-    href: '/sentiment',
+    title: 'Dashboard & Analytics',
+    description: 'Central command centre with KPI tracking, threshold filtering, employee identification, and data-driven insights across all innovation activity.',
+    href: '/dashboard',
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
       </svg>
     ),
   },
@@ -83,7 +83,7 @@ export default function Home() {
               </h1>
               <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
                 AInovate is an AI-native platform that helps any organization capture ideas,
-                run AI Academy learning sessions, and analyze sentiment — all powered by advanced AI.
+                capture ideas, build business cases, track ROI, and upskill teams — all powered by AI and your organisation&apos;s own data.
               </p>
               <div className="flex items-center justify-center gap-4">
                 <Link
